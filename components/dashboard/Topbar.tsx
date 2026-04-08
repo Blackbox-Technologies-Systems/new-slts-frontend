@@ -18,7 +18,7 @@ export function Topbar({ notificationCount = 3 }: TopbarProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 items-center gap-4 px-4 md:px-6",
+        "sticky top-0 z-30 flex h-16 items-center gap-4  px-4 md:pr-6 md:pl-3",
         "bg-[#0B1629] border-b border-white/5"
       )}
     >
@@ -57,7 +57,7 @@ export function Topbar({ notificationCount = 3 }: TopbarProps) {
           <Input
             placeholder="violations, offenders, disputes, reports..."
             className={cn(
-              "pl-9 h-9 text-sm rounded-lg",
+              "pl-6 h-9 text-sm rounded-lg",
               "bg-white/5 border-white b0order-2 text-white placeholder:text-white/25",
               "focus-visible:ring-white/20 focus-visible:border-white/20",
               "transition-colors"
@@ -70,7 +70,7 @@ export function Topbar({ notificationCount = 3 }: TopbarProps) {
       <div className="flex items-center gap-2 shrink-0">
         {/* Notification bell */}
         <button className="relative h-9 w-9 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors">
-          <Bell className="h-5 w-5" />
+          <Bell className="h-5 w-5 text-white" />
           {notificationCount > 0 && (
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#0B1629]" />
           )}

@@ -56,6 +56,7 @@ export const PERSIST_KEY = "slts-root";
 interface SidebarChildItem {
   title: string;
   href: string;
+  isModal?: boolean;
 }
 
 interface SidebarNavItem {
@@ -78,9 +79,9 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     href: "/dashboard/violations",
     icon: "AlertTriangle",
     children: [
-      { title: "View Violations", href: "/dashboard/violations" },
-      { title: "Disputes", href: "/dashboard/violations/disputes" },
-      { title: "Summary", href: "/dashboard/violations/summary" },
+      { title: "View Violations", href: "/dashboard/violations", isModal: true },
+      { title: "Disputes", href: "/dashboard/violations/disputes", isModal: true },
+      { title: "Summary", href: "/dashboard/violations/summary", isModal: true },
     ],
   },
   {
@@ -99,8 +100,8 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     icon: "UserCog",
     requiredRole: "admin",
     children: [
-      { title: "All Users", href: "/dashboard/users" },
-      { title: "Roles", href: "/dashboard/users/roles" },
+      { title: "All Users", href: "/dashboard/users", isModal: false },
+      { title: "Roles", href: "/dashboard/users/roles", isModal: false },
     ],
   },
   {
