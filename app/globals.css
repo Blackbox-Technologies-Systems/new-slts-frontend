@@ -1,75 +1,263 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ───────────────────────────────────────────────────────────────────────────────
+ * TAILWIND CSS v4 - CSS-FIRST CONFIGURATION
+ * ───────────────────────────────────────────────────────────────────────────────
+ * This file contains all Tailwind configuration using the CSS-first approach.
+ * Theme customization happens via @theme blocks instead of tailwind.config.js
+ * ─────────────────────────────────────────────────────────────────────────────── */
 
-@layer base {
-	:root {
-		--background: red;
-		--bg-primary: red;
-		--foreground: 222.2 84% 4.9%;
-		--card: 0 0% 100%;
-		--card-foreground: 222.2 84% 4.9%;
-		--popover: 0 0% 100%;
-		--popover-foreground: 222.2 84% 4.9%;
-		--primary: #010427;
-		--primary-foreground: 210 40% 98%;
-		--secondary: 210 40% 96.1%;
-		--secondary-foreground: 222.2 47.4% 11.2%;
-		--muted: 215 16.3% 46.9%;
-		--muted-foreground: 215.4 16.3% 46.9%;
-		--accent: 210 40% 96.1%;
-		--accent-foreground: 222.2 47.4% 11.2%;
-		--destructive: 0 84.2% 60.2%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 214.3 31.8% 91.4%;
-		--input: 214.3 31.8% 91.4%;
-		--ring: 208 74% 26%;
-		--radius: 0.5rem;
-	}
+/* ─── BASE IMPORT ───────────────────────────────────────────────────────────────
+ * Single import replaces v3's @tailwind base/components/utilities directives */
+@import "tailwindcss";
 
-	.dark {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
-		--primary: 208 74% 40%;
-		--primary-foreground: 222.2 47.4% 11.2%;
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 208 74% 40%;
-	}
+/* ─── THEME CONFIGURATION ─────────────────────────────────────────────────────
+ * All theme values defined here become available as CSS custom properties
+ * (--color-*), (--font-*), (--spacing-*), etc. and as utility classes
+ *
+ * NOTE: All color values use HEX format as requested */
+@theme {
+
+  /* ─── BORDER RADIUS ──────────────────────────────────────────────────────────
+   * Controls the default border radius values across the application */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* ─── BACKGROUND COLORS ────────────────────────────────────────────────────
+   * Primary surface colors for cards, popovers, and main backgrounds */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* ─── PRIMARY COLORS ─────────────────────────────────────────────────────────
+   * Main brand color (SLTS Navy #010427) and its text companion */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* ─── SECONDARY COLORS ───────────────────────────────────────────────────────
+   * Supporting accent colors for secondary buttons, badges, etc. */
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* ─── ACCENT COLORS ──────────────────────────────────────────────────────────
+   * Hover states and subtle highlights */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* ─── MUTED COLORS ───────────────────────────────────────────────────────────
+   * Subdued backgrounds and disabled states */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* ─── DESTRUCTIVE COLORS ─────────────────────────────────────────────────────
+   * Error states, danger actions, delete confirmations */
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  /* ─── BORDER & INPUT COLORS ──────────────────────────────────────────────────
+   * Form controls, dividers, and outline colors */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ─── BRAND PALETTE ──────────────────────────────────────────────────────────
+   * Extended brand color scale for charts, illustrations, and custom components */
+  --color-brand-50: #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-300: #7dd3fc;
+  --color-brand-400: #38bdf8;
+  --color-brand-500: #0ea5e9;
+  --color-brand-600: #0284c7;
+  --color-brand-700: #0369a1;
+  --color-brand-800: #075985;
+  --color-brand-900: #0c4a6e;
+  --color-brand-950: #082f49;
+
+  /* ─── CONTAINER CONFIGURATION ────────────────────────────────────────────────
+   * Max-width and padding for container utility */
+  --container-center: true;
+  --container-padding: 2rem;
+  --container-2xl: 1400px;
+
+  /* ─── ANIMATIONS ─────────────────────────────────────────────────────────────
+   * Custom keyframe animations for accordions, modals, and page transitions */
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+  --animate-slide-in: slide-in-from-left 0.3s ease-out;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
 }
 
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+/* ─── CSS CUSTOM PROPERTIES (CSS VARIABLES) ───────────────────────────────────
+ * These are the source values referenced by the @theme block above.
+ * They are split into :root (light mode) and .dark (dark mode) scopes.
+ *
+ * ALL VALUES ARE IN HEX FORMAT
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+/* ─── LIGHT MODE (DEFAULT) ──────────────────────────────────────────────────── */
+:root {
+
+  /* ─── Core Canvas Colors ─────────────────────────────────────────────────────
+   * Background and text colors for the main application surface */
+  --background: #ffffff;
+  --foreground: #020617;
+
+  /* ─── Card & Overlay Surface Colors ──────────────────────────────────────────
+   * Popovers, dropdowns, modals, and elevated surfaces */
+  --card: #ffffff;
+  --card-foreground: #020617;
+  --popover: #ffffff;
+  --popover-foreground: #020617;
+
+  /* ─── Brand Identity Colors ──────────────────────────────────────────────────
+   * Primary navy blue (#010427) - SLTS brand color */
+  --primary: #010427;
+  --primary-foreground: #f8fafc;
+
+  /* ─── Supporting UI Colors ───────────────────────────────────────────────────
+   * Secondary actions, hover states, and subtle accents */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  /* ─── Subdued & Disabled States ────────────────────────────────────────────────
+   * Muted text, disabled inputs, and placeholder content */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  /* ─── Interactive Highlight Colors ─────────────────────────────────────────────
+   * Selected items, focus rings, and accent elements */
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+
+  /* ─── Feedback & Status Colors ─────────────────────────────────────────────────
+   * Errors, warnings, success states, and destructive actions */
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+
+  /* ─── Structural Element Colors ────────────────────────────────────────────────
+   * Borders, input borders, and focus rings */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #010427;
+
+  /* ─── Layout Dimensions ────────────────────────────────────────────────────────
+   * Default border radius for all rounded elements */
+  --radius: 0.5rem;
 }
 
-/* Custom scrollbar */
+/* ─── DARK MODE OVERRIDE ──────────────────────────────────────────────────────
+ * Automatically applied when .dark class is present on <html> element
+ * via next-themes or similar theme management library */
+.dark {
+
+  /* ─── Dark Canvas Colors ─────────────────────────────────────────────────────
+   * Inverted background/text for dark mode preference */
+  --background: #020617;
+  --foreground: #f8fafc;
+
+  /* ─── Dark Card & Overlay Colors ─────────────────────────────────────────────
+   * Elevated surfaces in dark mode - slightly lighter than background */
+  --card: #020617;
+  --card-foreground: #f8fafc;
+  --popover: #020617;
+  --popover-foreground: #f8fafc;
+
+  /* ─── Dark Mode Primary Colors ─────────────────────────────────────────────────
+   * Slightly adjusted primary for better contrast on dark backgrounds */
+  --primary: #1e3a8a;
+  --primary-foreground: #0f172a;
+
+  /* ─── Dark Supporting Colors ──────────────────────────────────────────────────
+   * Secondary, muted, and accent colors for dark surfaces */
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+
+  /* ─── Dark Mode Feedback Colors ───────────────────────────────────────────────
+   * Adjusted destructive color for dark backgrounds */
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f8fafc;
+
+  /* ─── Dark Structural Colors ───────────────────────────────────────────────────
+   * Borders and inputs need to be visible on dark backgrounds */
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #1e3a8a;
+}
+
+/* ─── KEYFRAME ANIMATION DEFINITIONS ──────────────────────────────────────────
+ * Reusable animations for accordions, transitions, and page loads */
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── BASE STYLES ───────────────────────────────────────────────────────────────
+ * Global element styles applied after Tailwind's base layer */
+@layer base {
+  /* Apply border color by default to all elements */
+  * {
+    @apply border-border;
+  }
+
+  /* Body canvas styling */
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* ─── SCROLLBAR STYLING ─────────────────────────────────────────────────────────
+ * Custom thin scrollbars matching the application's design language */
 ::-webkit-scrollbar {
-	width: 6px;
-	height: 6px;
+  width: 6px;
+  height: 6px;
 }
+
 ::-webkit-scrollbar-track {
-	@apply bg-transparent;
+  background-color: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-	@apply bg-border rounded-full;
+  background-color: var(--border);
+  border-radius: 9999px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-	@apply bg-muted-foreground/30;
+  background-color: color-mix(in srgb, var(--muted-foreground) 30%, transparent);
+}
+
+/* Firefox scrollbar support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
