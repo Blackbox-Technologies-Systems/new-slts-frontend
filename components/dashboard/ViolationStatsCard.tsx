@@ -38,63 +38,53 @@ export function ViolationStatsCard({
 	};
 
 	return (
-		<div
-			className={cn(
-				"rounded-xl bg-white p-5 shadow-sm",
-				"dark:bg-card dark:border-border",
-				className,
-			)}
-		>
-			<div className="flex items-start justify-between">
+		<div className={`rounded-2xl bg-card p-4 dark:border-border ${className}`}>
+			<div className="flex items-start">
 				<div className="flex-1">
 					{/* Title row with icon and change indicator */}
 					<div className="flex justify-between gap-2 mb-3">
 						<div
-							className={cn(
-								"flex h-8 w-8 items-center justify-center rounded-lg",
-								stat.variant === "danger"
-									? "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
-									: "bg-primary/10 text-primary",
-							)}
+							className={`flex h-10 w-10 items-center justify-center rounded-full p-2	bg-icon-accent text-primary`}
 						>
 							{ICON_MAP[stat.icon] || <BarChart3 className="h-5 w-5" />}
 						</div>
 						{stat.change && (
-							<div className="flex items-center gap-1 text-xs font-medium p-2 rounded-3xl bg-muted">
+							<div className="flex items-center gap-1 text-xs h-8 font-medium px-1.5 py-0 rounded-3xl bg-icon-accent">
 								{stat.change.trend === "up" ? (
 									<ArrowUp className="h-3 w-3" />
-								) : (
+								) : stat.change.trend === "down" ? (
 									<ArrowDown className="h-3 w-3" />
-								)}
+								) : null}
 								<span>
-									{stat.change.trend === "up" ? "+" : "-"}
-									{stat.change.value}%
+									{stat.change.trend === "up"
+										? "+"
+										: stat.change.trend === "down"
+											? "-"
+											: ""}
+									{stat.change.value}
+									{stat.change.trend === "up" || stat.change.trend === "down"
+										? "%"
+										: ""}
+									{stat.suffix ? ` ${stat.suffix}` : ""}
 								</span>
 							</div>
 						)}
 					</div>
 
 					{/* Value */}
-					<div className="flex items-baseline gap-1">
+					<div className="inline-flex items-baseline gap-1">
 						{stat.prefix && (
-							<span className="text-lg font-semibold text-muted-foreground">
+							<span className="text-lg font-semibold text-primary">
 								{stat.prefix}
 							</span>
 						)}
-						<span className="text-2xl font-bold tracking-tight">
+						<span className="text-4xl font-semibold text-primary tracking-tight">
 							{formatValue(stat.value)}
 						</span>
 					</div>
 
 					{/* Title */}
 					<p className="text-sm text-muted-foreground mt-1">{stat.title}</p>
-
-					{/* Subtitle */}
-					{stat.subtitle && (
-						<p className="text-xs text-muted-foreground/70 mt-1">
-							{stat.subtitle}
-						</p>
-					)}
 				</div>
 			</div>
 		</div>

@@ -33,7 +33,7 @@ const TOP_STATS: DashboardStat[] = [
 	{
 		title: "Total Unique Offenders",
 		value: 191,
-		change: { value: 18, trend: "up" },
+		change: { value: 18 },
 		suffix: "Repeat",
 		icon: "Users",
 	},
@@ -44,23 +44,23 @@ const REVENUE_STATS = [
 		label: "Revenue Generated",
 		value: "7,752,000",
 		subtitle: "From 13,908 violations",
-		icon: "wallet" as const,
+		icon: "money" as const,
 	},
 	{
 		label: "Revenue Collected",
 		value: "38,000",
-		icon: "clock" as const,
+		icon: "wallet" as const,
 	},
 	{
 		label: "Outstanding",
 		value: "7,713,200",
 		subtitle: "847 overdue",
-		icon: "activity" as const,
+		icon: "clock" as const,
 	},
 	{
 		label: "Activity (24h)",
 		value: "3,600",
-		icon: "trending" as const,
+		icon: "activity" as const,
 		miniChart: true,
 	},
 ];
@@ -132,7 +132,7 @@ const VIOLATIONS_DATA: Violation[] = [
 		violationDate: new Date(
 			Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000,
 		).toISOString(),
-		status: (["submitted", "approved", "rejected", "pending"] as const)[i % 4],
+		status: (["submitted", "approved", "rejected"] as const)[i % 3],
 	})),
 ];
 
