@@ -41,8 +41,27 @@ export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUI();
   const { user } = useAuth();
+
+  // Tracks which dropdown groups are open (independent of active state)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
-  const [isToggled, setIsToggled] = useState(false); 
+
+  /**
+   * `selectedItem` is the ONLY thing that decides which parent item is active.
+   * pathname is used purely to set the correct initial value on first render /
+   * page refresh — after that, clicks are in full control.
+   */
+  const [selectedItem, setSelectedItem] = useState<string>(() => {
+    const match = SIDEBAR_NAV_ITEMS.find(
+      (item) =>
+        pathname === item.href ||
+        pathname.startsWith(item.href + "/") ||
+        item.children?.some(
+          (c) => pathname === c.href || pathname.startsWith(c.href + "/")
+        )
+    );
+    return match?.href ?? "";
+  });
+
   const [openModal, setOpenModal] = useState<string | null>(null);
 
   const navItems = SIDEBAR_NAV_ITEMS.filter((item) => {
@@ -50,25 +69,47 @@ export function Sidebar() {
     return true;
   });
 
-  const toggleGroup = (href: string) => {
-    setOpenGroups((prev) => ({ ...prev, [href]: !prev[href] }));
-    setIsToggled((prev) => !prev); // Toggle the state to trigger re-render
+  /** Called when a dropdown parent is clicked */
+  const handleParentClick = (href: string) => {
+    setSelectedItem(href);                                    // make this the only active item
+    setOpenGroups((prev) => ({ ...prev, [href]: !prev[href] })); // toggle dropdown
   };
 
-  const handleChildClick = (child: any, e: React.MouseEvent) => {
+  /** Called when a leaf (non-dropdown) link is clicked */
+  const handleLeafClick = (href: string) => {
+    setSelectedItem(href);
+  };
+
+  /**
+   * Called when a child item is clicked.
+   * Always highlights the PARENT (not the child).
+   * If the child is modal-only, prevent navigation and open the modal instead.
+   */
+  const handleChildClick = (
+    parentHref: string,
+    child: { href: string; isModal?: boolean },
+    e: React.MouseEvent
+  ) => {
+    setSelectedItem(parentHref); // parent stays lit
     if (child.isModal) {
       e.preventDefault();
       setOpenModal(child.href);
-     
     }
   };
 
-  const isGroupActive = (item: (typeof SIDEBAR_NAV_ITEMS)[0]) => {
-    if (pathname === item.href || pathname.startsWith(item.href + "/")) return true;
-    if (item.children?.some((c) => pathname === c.href || pathname.startsWith(c.href + "/")))
-      return true;
-    return false;
-  };
+  /**
+   * Active check — selectedItem ONLY.
+   * No pathname fallback here; that would keep the previous page's item
+   * highlighted when modal children never change the URL.
+   */
+  const isParentActive = (item: (typeof SIDEBAR_NAV_ITEMS)[0]): boolean =>
+    selectedItem === item.href;
+
+  // Shared class blocks keep the layout stable (border-transparent = no shift)
+  const activeRow =
+    "bg-white/10 text-white border-l-4 border-white pl-2";
+  const inactiveRow =
+    "text-white/50 hover:text-white hover:bg-white/5 border-l-4 border-transparent pl-2";
 
   return (
     <>
@@ -79,7 +120,7 @@ export function Sidebar() {
           sidebarCollapsed ? "w-0 overflow-hidden md:w-24" : "w-64"
         )}
       >
-        {/* Logo */}
+        {/* ── Logo / header ── */}
         <div
           className={cn(
             "flex items-center justify-between h-16 px-4 border-b border-white/5 shrink-0",
@@ -87,63 +128,56 @@ export function Sidebar() {
           )}
         >
           {!sidebarCollapsed ? (
-            <div className="flex items-center gap-2">
-              <Image
-                src="/images/slts-logo.png"
-                alt="SLTS Logo"
-                width={84}
-                height={84}
-                className="shrink-0"
-              />
-            </div>
+            <Image
+              src="/images/slts-logo.png"
+              alt="SLTS Logo"
+              width={84}
+              height={84}
+              className="shrink-0"
+            />
           ) : (
-            <div>
-              <button
-                onClick={toggleSidebar}
-                className="text-white hover:text-white hover:bg-white/10"
-              >
-                <Menu className="h-8 w-8" />
-              </button>
-            </div>
+            <button
+              onClick={toggleSidebar}
+              className="text-white hover:bg-white/10 p-1 rounded-md transition-colors"
+              aria-label="Open sidebar"
+            >
+              <Menu className="h-8 w-8" />
+            </button>
           )}
 
-          {/* Close button (mobile / desktop collapse) */}
           {!sidebarCollapsed && (
             <button
               onClick={toggleSidebar}
-              className="h-5 w-5 rounded-full text-[#0B1629] flex items-center text bg-white justify-center text-black hover:text-white hover:bg-white/10 transition-colors"
+              className="h-5 w-5 rounded-full bg-white flex items-center justify-center text-[#0B1629] hover:bg-white/80 transition-colors shrink-0"
+              aria-label="Collapse sidebar"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
-        {/* Navigation */}
+        {/* ── Navigation ── */}
         <nav className="flex-1 overflow-y-auto py-5 px-3 scrollbar-thin scrollbar-thumb-white/10">
           <ul className="space-y-4">
             {navItems.map((item) => {
-              const active = isGroupActive(item);
-              const hasChildren = item.children && item.children.length > 0;
-              const isOpen = openGroups[item.href] ?? active;
+              const active = isParentActive(item);
+              const hasChildren = !!(item.children?.length);
+              const isOpen = openGroups[item.href];
 
               return (
                 <li key={item.href}>
-                  {/* Parent item */}
+                  {/* ── Parent row ── */}
                   {hasChildren ? (
                     <button
-                      onClick={() => toggleGroup(item.href)}
+                      onClick={() => handleParentClick(item.href)}
                       className={cn(
-                        "w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                        isToggled
-                          ? "bg-white/10 text-white py-4 border-l-4 border-white"
-                          : "text-white/50 hover:text-white hover:bg-white/5",
-                        sidebarCollapsed && "justify-center px-3"
+                        "w-full flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all",
+                        active ? activeRow : inactiveRow,
+                        sidebarCollapsed && "justify-center border-l-0 px-3 pl-3"
                       )}
                       title={sidebarCollapsed ? item.title : undefined}
                     >
-                      <span className="shrink-0 text-white/70">
-                        {ICON_MAP[item.icon]}
-                      </span>
+                      <span className="shrink-0">{ICON_MAP[item.icon]}</span>
                       {!sidebarCollapsed && (
                         <>
                           <span className="flex-1 text-left">{item.title}</span>
@@ -159,46 +193,39 @@ export function Sidebar() {
                   ) : (
                     <Link
                       href={item.href}
+                      onClick={() => handleLeafClick(item.href)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                        active
-                          ? "bg-white/10 text-white py-4 border-l-4 border-white"
-                          : "text-white/50 hover:text-white hover:bg-white/5",
-                        sidebarCollapsed && "justify-center px-3"
+                        "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all",
+                        active ? activeRow : inactiveRow,
+                        sidebarCollapsed && "justify-center border-l-0 px-3 pl-3"
                       )}
                       title={sidebarCollapsed ? item.title : undefined}
                     >
-                      <span className="shrink-0 text-white/70">
-                        {ICON_MAP[item.icon]}
-                      </span>
+                      <span className="shrink-0">{ICON_MAP[item.icon]}</span>
                       {!sidebarCollapsed && (
                         <span className="flex-1">{item.title}</span>
                       )}
                     </Link>
                   )}
 
-                  {/* Sub-items */}
+                  {/* ── Sub-items (no border — parent carries the indicator) ── */}
                   {hasChildren && isOpen && !sidebarCollapsed && (
-                    <ul className="mt-0.5 ml-4 pl-4 border-l border-white/10 space-y-0.5">
+                    <ul className="mt-1 ml-4 pl-4 border-l border-white/10 space-y-0.5">
                       {item.children!.map((child) => {
-                        const childActive =
-                          pathname === child.href ||
-                          pathname.startsWith(child.href + "/");
+                        const childActive = pathname === child.href;
                         return (
                           <li key={child.href}>
                             <Link
                               href={child.href}
-                              onClick={(e) => handleChildClick(child, e)}
+                              onClick={(e) => handleChildClick(item.href, child, e)}
                               className={cn(
                                 "block px-3 py-1.5 text-sm rounded-md transition-colors",
                                 childActive
-                                  ? "text-white font-medium"
-                                  : "text-white/40 hover:text-white/70",
-                                child.isModal && "cursor-pointer"
+                                  ? "text-white font-semibold"
+                                  : "text-white/40 hover:text-white/70"
                               )}
                             >
                               {child.title}
-                           
                             </Link>
                           </li>
                         );
@@ -211,7 +238,7 @@ export function Sidebar() {
           </ul>
         </nav>
 
-        {/* Bottom – user profile */}
+        {/* ── User profile ── */}
         <div className="shrink-0 border-t border-white/5 px-3 py-3">
           <div
             className={cn(
@@ -220,13 +247,11 @@ export function Sidebar() {
             )}
           >
             <div className="flex items-center gap-3 min-w-0">
-              {/* Avatar */}
               <div className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center shrink-0">
                 <span className="text-xs font-semibold text-white">
                   {getInitials(user?.name)}
                 </span>
               </div>
-
               {!sidebarCollapsed && (
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-white truncate">
@@ -243,6 +268,7 @@ export function Sidebar() {
               <Link
                 href="/dashboard/settings"
                 className="h-8 w-8 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-colors shrink-0"
+                aria-label="Settings"
               >
                 <Settings className="h-4 w-4 text-white" />
               </Link>
@@ -251,23 +277,21 @@ export function Sidebar() {
         </div>
       </aside>
 
-      {/* Modal Renderer - Add your modal component here */}
+      {/* ── Modal renderer ── */}
       {openModal && (
         <div
           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
           onClick={() => setOpenModal(null)}
         >
           <div
-            className="bg-[#0B1629] rounded-lg p-6 max-w-md w-full mx-4"
+            className="bg-[#0B1629] rounded-lg p-6 max-w-md w-full mx-4 border border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-white text-xl font-bold mb-4">Modal</h2>
-            <p className="text-white/70 mb-4">
-              This is a modal for: {openModal}
-            </p>
+            <p className="text-white/70 mb-4">Content for: {openModal}</p>
             <button
               onClick={() => setOpenModal(null)}
-              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20"
+              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
             >
               Close
             </button>
