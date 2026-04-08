@@ -75,6 +75,50 @@ export interface Activity {
   type: "info" | "success" | "warning" | "error";
 }
 
+// ─── Violation Types ───────────────────────────────────────────────────────────
+
+export type ViolationStatus = "submitted" | "approved" | "rejected" | "pending";
+
+export interface Offender {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
+export interface Violation {
+  id: string;
+  sn: number;
+  offender: Offender;
+  pcn: string;
+  offenseType: string;
+  plateNo: string;
+  amount: number;
+  violationDate: string;
+  status: ViolationStatus;
+}
+
+export interface DashboardStat {
+  title: string;
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  change?: {
+    value: number;
+    trend: "up" | "down";
+  };
+  subtitle?: string;
+  icon: string;
+  variant?: "default" | "primary" | "secondary" | "danger";
+}
+
+export interface RevenueStat {
+  label: string;
+  value: string;
+  prefix: string;
+  subtitle?: string;
+  icon?: string;
+}
+
 // ─── Redux Store Types ─────────────────────────────────────────────────────────
 
 export interface RootState {
