@@ -1,185 +1,105 @@
-import Link from "next/link";
-import {
-  Zap, Shield, BarChart3, Users, ArrowRight,
-  CheckCircle2, Github, Twitter,
-} from "lucide-react";
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ROUTES, APP_NAME } from "@/constants";
-
-const FEATURES = [
-  {
-    icon: <Shield className="h-6 w-6" />,
-    title: "Enterprise Auth",
-    description: "Secure JWT authentication with Blackbox standards. Role-based access, middleware protection, and seamless session management.",
-  },
-  {
-    icon: <Zap className="h-6 w-6" />,
-    title: "Redux Toolkit",
-    description: "Type-safe state management with Redux Toolkit. Pre-configured slices for auth, UI, and notifications — just add your business logic.",
-  },
-  {
-    icon: <BarChart3 className="h-6 w-6" />,
-    title: "Developer Dashboard",
-    description: "Modern dashboard UI with analytics, user management, and customizable layouts. Built for productivity and ease of use.",
-  },
-  {
-    icon: <Users className="h-6 w-6" />,
-    title: "Blackbox Components",
-    description: "Pre-built UI components following Blackbox design system. Accessible, themeable, and ready for enterprise applications.",
-  },
-];
-
-const INCLUDED = [
-  "Next.js 14 App Router",
-  "TypeScript strict mode",
-  "Tailwind CSS + shadcn/ui",
-  "Redux Toolkit + redux-persist",
-  "Cookie-based JWT auth",
-  "Middleware route protection",
-  "Axios with interceptors",
-  "Custom React hooks",
-  "API route handlers",
-  "Dark / Light / System theme",
-  "Recharts analytics",
-  "Sonner toast notifications",
-];
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
+  const [scrolled, setScrolled] = useState(false); // only needed if hero depends on scroll
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navbar */}
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/bb-logo-box.png"
-              alt="BB Logo"
-              width={32}
-              height={32}
-              className="shrink-0"
-            />
-            <span className="font-bold text-lg">{APP_NAME}</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-            <a href="#whats-inside" className="text-muted-foreground hover:text-foreground transition-colors">What&apos;s Inside</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link href={ROUTES.LOGIN}>Sign in</Link>
-            </Button>
-            <Button asChild>
-              <Link href={ROUTES.REGISTER}>Get started</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="container mx-auto px-4 py-24 md:py-32 text-center">
-          <Badge variant="secondary" className="mb-6 gap-1.5">
-            <Zap className="h-3 w-3" />
-            Blackbox Technologies Official Starter
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-3xl mx-auto leading-tight">
-            Build faster at{" "}
-            <span className="text-primary">Blackbox Technologies</span>
-          </h1>
-          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            The official Next.js starter pack for Blackbox software developers. Auth, state management, dashboard UI - everything you need to ship production apps quickly.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" asChild className="gap-2">
-              <Link href={ROUTES.REGISTER}>
-                Start building <ArrowRight className="h-4 w-4" />
+      <main className="flex-1 bg-[linear-gradient(to_bottom_right,#f8fafc,#f1f5f9)]">
+        {/* Navigation */}
+        <nav className={cn(
+          "sticky top-0 left-0 right-0 z-[1000] w-full transition-all duration-300 bg-white/95 backdrop-blur py-4 px-0",
+          scrolled ? "shadow-[0_2px_20px_rgba(0,0,0,0.1)]" : ""
+        )}>
+          <div className="max-w-7xl mx-auto flex items-center justify-between w-full px-6 sm:px-32">
+            <div className="flex items-center gap-4">
+              <Image
+                src="/images/slts-logo-edited.png"
+                alt="SLTS Logo"
+                className="h-auto w-[100px] md:w-[120px] shrink-0"
+                width={500}
+                height={500}
+              />
+            </div>
+
+            <div className="hidden lg:flex gap-10 list-none items-center mb-0">
+              <Link
+                href="#solution"
+                className="text-[#64748B] no-underline font-medium text-base cursor-pointer transition-colors hover:text-[#010427]" 
+              >
+                  Solution
               </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href={ROUTES.LOGIN}>
-                View demo dashboard
+              <Link
+                href="#features"
+                className="text-[#64748B] no-underline font-medium text-base cursor-pointer transition-colors hover:text-[#010427]" 
+              >
+                  Features
               </Link>
-            </Button>
-          </div>
+              <Link
+                href="#about" 
+                className="text-[#64748B] no-underline font-medium text-base cursor-pointer transition-colors hover:text-[#010427]" 
+              >
+                  About
+              </Link>
+              <Link
+                href="#contact"
+                className="text-[#64748B] no-underline font-medium text-base cursor-pointer transition-colors hover:text-[#010427]" 
+              >
+                  Contact
+              </Link>
+            </div>
 
-          {/* Demo credentials hint */}
-          <div className="mt-8 inline-flex items-center gap-2 rounded-full border bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
-            <span>Demo:</span>
-            <code className="text-foreground font-mono">admin@blackbox.dev</code>
-            <span>/</span>
-            <code className="text-foreground font-mono">password</code>
+            <div className="flex gap-3 md:gap-4 items-center">
+              <Button variant="outline" className="hidden sm:inline-flex font-medium" asChild>
+                <Link href="/payment-login">Pay Violation</Link>
+              </Button>
+              <Button variant="primary" className="font-medium" asChild>
+                <Link href="/login">Client Login</Link>
+              </Button>
+            </div>
           </div>
-        </section>
+        </nav>
 
-        {/* Features */}
-        <section id="features" className="bg-muted/30 border-y py-20">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold">Everything you need</h2>
-              <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-                A carefully curated set of patterns and libraries so you can focus on building your product.
+        {/* Hero section */}
+        <section className="pt-32 px-8 pb-16 m-auto max-w-[1280px]">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="flex flex-col justify-between text-5.5 leading-tight mb-6">
+              <h1 className="text-4xl md:text-6xl text-[#010427] font-extrabold mb-6 leading-10 tracking-wide">
+                One-Stop <span className="bg-[linear-gradient(135deg,#010427_0%,#4f46E5_100%)] bg-clip-text text-transparent">Traffic Management</span> Solution
+              </h1>
+              <p className="text-xl text-[#64748B] mb-10 font-normal leading-9 tracking-wider">
+                The Strict Liability Traffic Systems (SLTS) is a cutting-edge platform designed to enhance traffic management, enforce road safety laws and reduce road accidents.
               </p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {FEATURES.map((f) => (
-                <Card key={f.title} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
-                      {f.icon}
-                    </div>
-                    <h3 className="font-semibold mb-2">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground">{f.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
+              <div className="flex gap-4">
+                <Button variant="primary">Get Started</Button>
+                <Button variant="outline">Learn More</Button>
 
-        {/* What's inside */}
-        <section id="whats-inside" className="container mx-auto px-4 py-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">Developer-First Stack</h2>
-            <p className="mt-3 text-muted-foreground">Everything Blackbox developers need to build enterprise applications.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
-            {INCLUDED.map((item) => (
-              <div key={item} className="flex items-center gap-2 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>{item}</span>
               </div>
-            ))}
-          </div>
-          <div className="mt-12 text-center">
-            <Button size="lg" asChild>
-              <Link href={ROUTES.LOGIN}>
-                Try the dashboard →
-              </Link>
-            </Button>
+            </div>
           </div>
         </section>
+        {/* About section */}
+        {/* Features section */}
+        {/* Services section */}
+        {/* Stats section */}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" />
-            <span>{APP_NAME} - Blackbox Technologies</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-              <Github className="h-4 w-4" />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-foreground transition-colors">
-              <Twitter className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-      </footer>
+      {/* Footer – you may also move this to a component */}
     </div>
   );
 }
