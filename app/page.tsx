@@ -105,7 +105,7 @@ export default function HomePage() {
 					</div>
 				</nav>
 
-				{/* Hero section */}
+				{/*--------  Hero section  --------*/}
 				<section className="pt-32 px-8 pb-16 m-auto max-w-[1280px]">
 					<div className="grid md:grid-cols-2 gap-16 items-center">
 						<div className="flex flex-col justify-between text-5 leading-tight mb-6">
@@ -140,7 +140,25 @@ export default function HomePage() {
 						</div>
 					</div>
 				</section>
-				{/* About section */}
+
+				{/*-------  About section  --------*/}
+				<section className="py-20 px-8 my-0 mx-auto bg-white">
+					<div className="grid grid-cols-2 px-4 mx-8 gap-16 items-center">
+						<div className="text-center">
+							<div className="text-9xl opacity-10">🚦</div>
+						</div>
+						<div>
+							<h3 className="text-[2rem] font-bold text-[#010427] mb-4">What is SLTS</h3>
+							<p className="text-[#64748B] text-sm leading-loose mb-6 text-justify">
+              					The SLTS is an intelligent and intuitive platform that provides a robust traffic management system using AI and big data to identify traffic offenses and alert the relevant authorities using a crowd-sourcing model.
+							</p>
+							<p className="text-[#64748gitB] text-sm leading-8 mb-6 text-justify">
+								Our cutting-edge platform is designed to enhance traffic management, enforce road safety laws, and reduce road accidents through automated monitoring and intelligent detection.
+							</p>
+						</div>
+					</div>
+				</section>
+
 				{/* Features section */}
 				{/* Services section */}
 				{/* Stats section */}
