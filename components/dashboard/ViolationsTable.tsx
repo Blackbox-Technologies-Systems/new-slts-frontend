@@ -26,6 +26,10 @@ const STATUS_LABELS: Record<ViolationStatus, string> = {
 	pending: "Pending",
 };
 
+const getRowClass = (rowIndex: number) => {
+	return rowIndex % 2 === 1 ? "bg-background" : "";
+};
+
 export function ViolationsTable({
 	violations,
 	className,
@@ -122,8 +126,8 @@ export function ViolationsTable({
 						</tr>
 					</thead>
 					<tbody className="divide-y">
-						{paginatedViolations.map((violation) => (
-							<tr key={violation.id} className="transition-colors">
+						{paginatedViolations.map((violation, index) => (
+							<tr key={violation.id} className={cn("transition-colors", getRowClass(index))}>
 								<td className="px-4 py-4 text-sm text-muted-foreground">
 									{violation.sn}
 								</td>
