@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ChartNoAxesCombined, Clipboard, Headset, Lightbulb, Menu, Settings, Shield, User, Wallet, X } from "lucide-react";
+import { ArrowLeftRight, ChartNoAxesCombined, Clipboard, Headset, Lightbulb, Menu, Settings, Shield, User, Wallet, X } from "lucide-react";
 // import "themify-icons/css/themify-icons.css";
 import {
 	FiSmartphone,
@@ -68,20 +68,20 @@ const services = [
 const stats = [
 	{ 	number: '60', 
 		label: 'Support Countries', 
-		icon: <Shield className="" />
+		icon: <Shield className="w-11 h-11 opacity-35" />
 	},
 	{ 
 		number: '12K', 
 		label: 'Transactions per hour', 
-		icon: <FiShield /> 
+		icon: <ArrowLeftRight className="w-11 h-11 opacity-35"/> 
 	},
 	{ 	number: '5B', 
 		label: 'Largest Transactions', 
-		icon: <ChartNoAxesCombined /> 
+		icon: <ChartNoAxesCombined className="w-11 h-11 opacity-35" /> 
 	},
 	{ 	number: '5', 
 		label: 'Years of Experience', 
-		icon: <User className="" /> 
+		icon: <User className="w-11 h-11 opacity-35" /> 
 	}
 ]
 
@@ -187,7 +187,7 @@ export default function HomePage() {
 				<section className="pt-32 px-8 pb-16 m-auto max-w-7xl">
 					<div className="grid md:grid-cols-2 gap-16 items-center">
 						<div className="flex flex-col justify-between text-5 leading-tight mb-6">
-							<h1 className="text-4xl md:text-6xl text-[#010427] font-extrabold mb-6 leading-10 tracking-wide">
+							<h1 className="text-4xl md:text-6xl text-[#010427] font-extrabold mb-6 leading-[1.2] tracking-wide">
 								One-Stop <span className="bg-[linear-gradient(135deg,#010427_0%,#4f46E5_100%)] bg-clip-text text-transparent">Traffic Management</span> Solution
 							</h1>
 							<p className="text-xl text-[#64748B] mb-10 font-normal leading-9 tracking-wider">
@@ -281,13 +281,13 @@ export default function HomePage() {
 				</section>
 
 				{/* Stats section */}
-				<section className="py-20 px-8 my-0 mx-auto bg-[linear-gradient(135deg,#010427_0%,#0A1854_50%,#4F46E5_100%)] text-white relative overflow-hidden">
+				<section className="py-20 px-9 sm:px-8 my-0 mx-auto bg-[linear-gradient(135deg,#010427_0%,#0A1854_50%,#4F46E5_100%)] text-white relative overflow-hidden">
 					<div className="sm:px-4 sm:mx-8">
-						<div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 my-0 mx-auto relatice 2-[1]">
+						<div className="grid grid-cols-2 md:grid-cols-4 gap-9 sm:gap-8 my-0 mx-auto relative z-1">
 							{stats.map((stats, index) => (
-								<div key={index} className="text-center relative">
+								<div key={index} className="text-center relative flex flex-col items-center justify-3">
 									<div className="text-5xl font-extrabold mb-2">{stats.number}</div>
-									<div className="text-base opacity-90 mb-4">{stats.label}</div>
+									<div className="text-sm opacity-90 mb-4">{stats.label}</div>
 									{stats.icon}
 								</div>
 							))}
