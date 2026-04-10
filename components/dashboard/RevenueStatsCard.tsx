@@ -56,7 +56,7 @@ export function RevenueStatsCard({
 			{/* Mini bar chart */}
 			{miniChart && (
 				<div className="mt-4 flex items-end gap-1 h-8">
-					{[30, 45, 25, 60, 40, 55, 35, 50, 45, 65].map((height, i) => (
+					{[30, 45, 25, 60, 40, 55, 35, 50].map((height, i) => (
 						<div
 							key={i}
 							className="flex-1 bg-primary/80 rounded-sm"
