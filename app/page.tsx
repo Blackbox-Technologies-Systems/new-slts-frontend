@@ -5,49 +5,65 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Headset, Menu, Wallet, X } from "lucide-react";
+import { Clipboard, Headset, Lightbulb, Menu, Settings, Wallet, X } from "lucide-react";
 // import "themify-icons/css/themify-icons.css";
 import {
-  FiSmartphone,
-  FiShield,
-  FiCreditCard,
-  FiRefreshCw,
-  FiHeadphones,
-  FiGrid,
+	FiSmartphone,
+	FiShield,
+	FiRefreshCw,
+	FiGrid,
 } from "react-icons/fi";
 
 const features = [
-  {
-    icon: <FiSmartphone />,
-    title: "Violation Detection",
-    description: "The violation detection system uses advanced AI."
-  },
-  {
-    icon: <FiShield />,
-    title: "Data Transmission",
-    description: "Data transmission is a critical component..."
-  },
-  {
-    icon: <Wallet className="w-10 h-10" />,
-    title: "Offense Registration",
-    description: "The offense registration system records all traffic violations."
-  },
-  {
-    icon: <FiRefreshCw />,
-    title: "Automated Notification",
-    description: "This system automatically notifies violators."
-  },
-  {
-    icon: <Headset className="w-10 h-10" />,
-    title: "Appeals",
-    description: "The appeals system provides a platform for individuals."
-  },
-  {
-    icon: <FiGrid />,
-    title: "Payment",
-    description: "The payment system facilitates easy and secure settlement."
-  },
-];
+	{
+		icon: <FiSmartphone />,
+		title: "Violation Detection",
+		description: "The violation detection system uses advanced AI."
+	},
+	{
+		icon: <FiShield />,
+		title: "Data Transmission",
+		description: "Data transmission is a critical component..."
+	},
+	{
+		icon: <Wallet className="w-10 h-10" />,
+		title: "Offense Registration",
+		description: "The offense registration system records all traffic violations."
+	},
+	{
+		icon: <FiRefreshCw />,
+		title: "Automated Notification",
+		description: "This system automatically notifies violators."
+	},
+	{
+		icon: <Headset className="w-10 h-10" />,
+		title: "Appeals",
+		description: "The appeals system provides a platform for individuals."
+	},
+	{
+		icon: <FiGrid />,
+		title: "Payment",
+		description: "The payment system facilitates easy and secure settlement."
+	},
+]
+
+const services = [
+	{
+		icon: <Settings className="w-6 h-6 sm:w-10 sm:h-10" />,
+		title: "Maintenanceof Traffic Lights",
+		desc: "Our comprehensive traffic light maintenance service..."
+	},
+	{
+		icon: <Lightbulb className="w-10 h-10" />,
+		title: "Installation of Traffic Lights",
+		desc: "Our expert installation service ensures that new traffic lights..."
+	},
+	{
+		icon: <Clipboard className="w-10 h-10" />,
+		title: "Traffic Offense Management",
+		desc: "Our traffic offense management system enhances..."
+	},
+]
 
 export default function HomePage() {
 	const [scrolled, setScrolled] = useState(false); // only needed if hero depends on scroll
@@ -203,12 +219,12 @@ export default function HomePage() {
 
 				{/* Features section */}
 				<section id="features" className="py-20 px-8 bg-[linear-gradient(135deg,#010427_0%,#0A1853_50%,#4f46E5_100%)] text-white max-w-full relative overflow-hidden">
-					<div>
+					<div className="px-2 sm:px-4 sm:mx-8">
 						<h2 className="text-center text-[2.5rem] font-extrabold mb-4">Our System</h2>
 						<p className="text-center text-lg mb-16 max-w-[600px] ml-auto mr-auto">
 							Our comprehensive system ensures efficient traffic management
 						</p>
-						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 px-2 sm:px-4 sm:mx-8 relative z-[index-1]">
+						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 relative z-[index-1]">
 							{features.map((feature, index) => (
 								<div className="bg-[#FFFFFF1A] backdrop-blur-[10px] p-8 rounded-2xl transition-all duration-300 border border-[#FFFFFF33] hover:-translate-y-2 hover:bg-[#FFFFFF26] hover:shadow-[0_12px_40px_#4F46E54D] hover:border-[#4F46E580]" key={index}>
 									<div className="text-[2.5rem] mb-6 text-white">
@@ -221,7 +237,28 @@ export default function HomePage() {
 						</div>
 					</div>
 				</section>
+
 				{/* Services section */}
+				<section className="py-20 sm:px-8 my-0 mx-auto bg-[#F8FAFC]">
+					<div className="sm:gap-3 px-8 sm:px-4 sm:mx-8">
+						<h2 className="text-center text-[2.5rem] font-extrabold text-[#1E293B] mb-4">What We Do</h2>
+						<p className="text-center text-lg text-[#64748B] mb-16 max-w-[600px] ml-auto mr-auto">
+							Comprehensive traffic management solutions
+						</p>
+
+						<div className="grid sm:grid-cols-3 gap-8 ">
+							{services.map((services, index) => (
+								<div className="flex flex-col justify-center items-center bg-white p-8 rounded-2xl leading-[1.6] shadow-[0_4px_20px_#00000014] transition-all duration-30 text-center border border-transparent hover:-translate-y-2 hover:shadow-[0_12px_40px_#0104271f] hover:border-[#6366f1]"key={index}>
+									<div className="mb-6 font-medium text-center">
+										{services.icon}
+									</div>
+									<h4 className="text-xl font-bold text-[#1E293B]  mb-3">{services.title}</h4>
+									<p className="text-[#64748B]">{services.desc}</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
 				{/* Stats section */}
 			</main>
 
