@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Clipboard, Headset, Lightbulb, Menu, Settings, Wallet, X } from "lucide-react";
+import { ChartNoAxesCombined, Clipboard, Headset, Lightbulb, Menu, Settings, Shield, User, Wallet, X } from "lucide-react";
 // import "themify-icons/css/themify-icons.css";
 import {
 	FiSmartphone,
@@ -63,6 +63,26 @@ const services = [
 		title: "Traffic Offense Management",
 		desc: "Our traffic offense management system enhances..."
 	},
+]
+
+const stats = [
+	{ 	number: '60', 
+		label: 'Support Countries', 
+		icon: <Shield className="" />
+	},
+	{ 
+		number: '12K', 
+		label: 'Transactions per hour', 
+		icon: <FiShield /> 
+	},
+	{ 	number: '5B', 
+		label: 'Largest Transactions', 
+		icon: <ChartNoAxesCombined /> 
+	},
+	{ 	number: '5', 
+		label: 'Years of Experience', 
+		icon: <User className="" /> 
+	}
 ]
 
 export default function HomePage() {
@@ -224,7 +244,7 @@ export default function HomePage() {
 						<p className="text-center text-lg mb-16 max-w-[600px] ml-auto mr-auto">
 							Our comprehensive system ensures efficient traffic management
 						</p>
-						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 relative z-[index-1]">
+						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 relative 2-[1]">
 							{features.map((feature, index) => (
 								<div className="bg-[#FFFFFF1A] backdrop-blur-[10px] p-8 rounded-2xl transition-all duration-300 border border-[#FFFFFF33] hover:-translate-y-2 hover:bg-[#FFFFFF26] hover:shadow-[0_12px_40px_#4F46E54D] hover:border-[#4F46E580]" key={index}>
 									<div className="text-[2.5rem] mb-6 text-white">
@@ -248,7 +268,7 @@ export default function HomePage() {
 
 						<div className="grid sm:grid-cols-3 gap-8 ">
 							{services.map((services, index) => (
-								<div className="flex flex-col justify-center items-center bg-white p-8 rounded-2xl leading-[1.6] shadow-[0_4px_20px_#00000014] transition-all duration-30 text-center border border-transparent hover:-translate-y-2 hover:shadow-[0_12px_40px_#0104271f] hover:border-[#6366f1]"key={index}>
+								<div className="flex flex-col justify-center items-center bg-white p-8 rounded-2xl leading-[1.6] shadow-[0_4px_20px_#00000014] transition-all duration-30 text-center border border-transparent hover:-translate-y-2 hover:shadow-[0_12px_40px_#0104271f] hover:border-[#6366f1]" key={index}>
 									<div className="mb-6 font-medium text-center">
 										{services.icon}
 									</div>
@@ -259,7 +279,21 @@ export default function HomePage() {
 						</div>
 					</div>
 				</section>
+
 				{/* Stats section */}
+				<section className="py-20 px-8 my-0 mx-auto bg-[linear-gradient(135deg,#010427_0%,#0A1854_50%,#4F46E5_100%)] text-white relative overflow-hidden">
+					<div className="sm:px-4 sm:mx-8">
+						<div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 my-0 mx-auto relatice 2-[1]">
+							{stats.map((stats, index) => (
+								<div key={index} className="text-center relative">
+									<div className="text-5xl font-extrabold mb-2">{stats.number}</div>
+									<div className="text-base opacity-90 mb-4">{stats.label}</div>
+									{stats.icon}
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
 			</main>
 
 			{/* Footer – you may also move this to a component */}
