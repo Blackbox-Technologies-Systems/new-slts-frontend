@@ -7,6 +7,8 @@
 
 /* ─── BASE IMPORT ───────────────────────────────────────────────────────────────
  * Single import replaces v3's @tailwind base/components/utilities directives */
+/* FONT IMPORT(S) */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ─── THEME CONFIGURATION ─────────────────────────────────────────────────────
@@ -242,6 +244,7 @@
 	/* Body canvas styling */
 	body {
 		@apply bg-background text-foreground;
+		font-family: "Inter", sans-serif;
 		font-feature-settings:
 			"rlig" 1,
 			"calt" 1;
