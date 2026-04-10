@@ -15,7 +15,7 @@ const TOP_STATS: DashboardStat[] = [
 		title: "Total Violations",
 		value: 20584,
 		change: { value: 12, trend: "up" },
-		icon: "BarChart3",
+		icon: "ChartNoAxesColumn",
 	},
 	{
 		title: "Approved Violations",
@@ -50,6 +50,7 @@ const REVENUE_STATS = [
 		label: "Revenue Collected",
 		value: "38,000",
 		icon: "wallet" as const,
+		progress: { value: 3, label: "₦5,000 of ₦100k collected" },
 	},
 	{
 		label: "Outstanding",
@@ -158,6 +159,7 @@ export default function DashboardPage() {
 						subtitle={revenue.subtitle}
 						icon={revenue.icon}
 						miniChart={revenue.miniChart}
+						progress={revenue.progress}
 					/>
 				))}
 			</div>
