@@ -103,7 +103,7 @@ export default function HomePage() {
 			<main className="flex-1 bg-[linear-gradient(to_bottom_right,#f8fafc,#f1f5f9)]">
 				{/*--------  Navigation  --------*/}
 				<nav className={cn(
-					"sticky top-0 left-0 right-0 z-[1000] w-full transition-all duration-300 bg-white/95 backdrop-blur py-3 px-0",
+					"sticky top-0 left-0 right-0 z-1000 w-full transition-all duration-300 bg-white/95 backdrop-blur py-3 px-0",
 					scrolled ? "shadow-[0_2px_20px_rgba(0,0,0,0.1)]" : ""
 				)}>
 					<div className="mx-auto flex items-center justify-between w-full px-6 sm:px-32 md:px-16 md:py-4">
@@ -111,7 +111,7 @@ export default function HomePage() {
 							<Image
 								src="/images/slts-logo-edited.png"
 								alt="SLTS Logo"
-								className="h-auto w-[100px] sm:w-[120px] shrink-0"
+								className="h-auto w-25 sm:w-30 shrink-0"
 								width={120}
 								height={50}
 							/>
@@ -144,7 +144,7 @@ export default function HomePage() {
 
 							<button
 								onClick={() => setIsMenuOpen(!isMenuOpen)}
-								className="lg:hidden text-[#64748b] hover:text-[#010427] z-[1200]"
+								className="lg:hidden text-[#64748b] hover:text-[#010427] z-1200"
 							>
 								{/* {isMenuOpen ? (
 									<svg className="w-6 h-6" fill="none" stroke="currentColor" />) : (
@@ -157,7 +157,7 @@ export default function HomePage() {
 
 					{/* Mobile Menu Overlay */}
 					<div className={cn(
-						"lg:hidden fixed inset-0 z-[1100] bg-white/95 transition-all duration-300 ease-in-out transform",
+						"lg:hidden fixed inset-0 z-1100 bg-white/95 transition-all duration-300 ease-in-out transform",
 						isMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
 					)}>
 						<div className="flex flex-col gap-8 list-none text-center p-8 bg-white">
@@ -184,7 +184,7 @@ export default function HomePage() {
 				</nav>
 
 				{/*--------  Hero section  --------*/}
-				<section className="pt-32 px-8 pb-16 m-auto max-w-[1280px]">
+				<section className="pt-32 px-8 pb-16 m-auto max-w-7xl">
 					<div className="grid md:grid-cols-2 gap-16 items-center">
 						<div className="flex flex-col justify-between text-5 leading-tight mb-6">
 							<h1 className="text-4xl md:text-6xl text-[#010427] font-extrabold mb-6 leading-10 tracking-wide">
@@ -241,7 +241,7 @@ export default function HomePage() {
 				<section id="features" className="py-20 px-8 bg-[linear-gradient(135deg,#010427_0%,#0A1853_50%,#4f46E5_100%)] text-white max-w-full relative overflow-hidden">
 					<div className="px-2 sm:px-4 sm:mx-8">
 						<h2 className="text-center text-[2.5rem] font-extrabold mb-4">Our System</h2>
-						<p className="text-center text-lg mb-16 max-w-[600px] ml-auto mr-auto">
+						<p className="text-center text-lg mb-16 max-w-150 ml-auto mr-auto">
 							Our comprehensive system ensures efficient traffic management
 						</p>
 						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 relative 2-[1]">
@@ -262,7 +262,7 @@ export default function HomePage() {
 				<section className="py-20 sm:px-8 my-0 mx-auto bg-[#F8FAFC]">
 					<div className="sm:gap-3 px-8 sm:px-4 sm:mx-8">
 						<h2 className="text-center text-[2.5rem] font-extrabold text-[#1E293B] mb-4">What We Do</h2>
-						<p className="text-center text-lg text-[#64748B] mb-16 max-w-[600px] ml-auto mr-auto">
+						<p className="text-center text-lg text-[#64748B] mb-16 max-w-150 ml-auto mr-auto">
 							Comprehensive traffic management solutions
 						</p>
 
