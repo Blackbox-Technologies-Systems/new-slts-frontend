@@ -5,7 +5,49 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
+import { Headset, Menu, Wallet, X } from "lucide-react";
+// import "themify-icons/css/themify-icons.css";
+import {
+  FiSmartphone,
+  FiShield,
+  FiCreditCard,
+  FiRefreshCw,
+  FiHeadphones,
+  FiGrid,
+} from "react-icons/fi";
+
+const features = [
+  {
+    icon: <FiSmartphone />,
+    title: "Violation Detection",
+    description: "The violation detection system uses advanced AI."
+  },
+  {
+    icon: <FiShield />,
+    title: "Data Transmission",
+    description: "Data transmission is a critical component..."
+  },
+  {
+    icon: <Wallet className="w-10 h-10" />,
+    title: "Offense Registration",
+    description: "The offense registration system records all traffic violations."
+  },
+  {
+    icon: <FiRefreshCw />,
+    title: "Automated Notification",
+    description: "This system automatically notifies violators."
+  },
+  {
+    icon: <Headset className="w-10 h-10" />,
+    title: "Appeals",
+    description: "The appeals system provides a platform for individuals."
+  },
+  {
+    icon: <FiGrid />,
+    title: "Payment",
+    description: "The payment system facilitates easy and secure settlement."
+  },
+];
 
 export default function HomePage() {
 	const [scrolled, setScrolled] = useState(false); // only needed if hero depends on scroll
@@ -142,17 +184,17 @@ export default function HomePage() {
 				</section>
 
 				{/*-------  About section  --------*/}
-				<section className="py-20 px-8 my-0 mx-auto bg-white">
-					<div className="grid grid-cols-2 px-4 mx-8 gap-16 items-center">
+				<section id="about" className="py-20 sm:px-8 my-0 mx-auto bg-white">
+					<div className="grid md:grid-cols-2 px-4 mx-8 gap-16 items-center">
 						<div className="text-center">
 							<div className="text-9xl opacity-10">🚦</div>
 						</div>
 						<div>
 							<h3 className="text-[2rem] font-bold text-[#010427] mb-4">What is SLTS</h3>
 							<p className="text-[#64748B] text-sm leading-loose mb-6 text-justify">
-              					The SLTS is an intelligent and intuitive platform that provides a robust traffic management system using AI and big data to identify traffic offenses and alert the relevant authorities using a crowd-sourcing model.
+								The SLTS is an intelligent and intuitive platform that provides a robust traffic management system using AI and big data to identify traffic offenses and alert the relevant authorities using a crowd-sourcing model.
 							</p>
-							<p className="text-[#64748gitB] text-sm leading-8 mb-6 text-justify">
+							<p className="text-[#64748B] text-sm leading-8 mb-6 text-justify">
 								Our cutting-edge platform is designed to enhance traffic management, enforce road safety laws, and reduce road accidents through automated monitoring and intelligent detection.
 							</p>
 						</div>
@@ -160,6 +202,25 @@ export default function HomePage() {
 				</section>
 
 				{/* Features section */}
+				<section id="features" className="py-20 px-8 bg-[linear-gradient(135deg,#010427_0%,#0A1853_50%,#4f46E5_100%)] text-white max-w-full relative overflow-hidden">
+					<div>
+						<h2 className="text-center text-[2.5rem] font-extrabold mb-4">Our System</h2>
+						<p className="text-center text-lg mb-16 max-w-[600px] ml-auto mr-auto">
+							Our comprehensive system ensures efficient traffic management
+						</p>
+						<div className="grid md:grid-cols-3 gap-5 sm:gap-3 px-2 sm:px-4 sm:mx-8 relative z-[index-1]">
+							{features.map((feature, index) => (
+								<div className="bg-[#FFFFFF1A] backdrop-blur-[10px] p-8 rounded-2xl transition-all duration-300 border border-[#FFFFFF33] hover:-translate-y-2 hover:bg-[#FFFFFF26] hover:shadow-[0_12px_40px_#4F46E54D] hover:border-[#4F46E580]" key={index}>
+									<div className="text-[2.5rem] mb-6 text-white">
+										{feature.icon}
+									</div>
+									<h4 className="text-xl font-bold mb-3">{feature.title}</h4>
+									<p className="text-[.85rem] leading-[1.6] text-[#FFFFFFE6]">{feature.description}</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</section>
 				{/* Services section */}
 				{/* Stats section */}
 			</main>
