@@ -1,5 +1,5 @@
-export const APP_NAME = "BB Starter Pack";
-export const APP_DESCRIPTION = "Blackbox Technologies' Next.js starter pack for software developers";
+export const APP_NAME = "SLTS";
+export const APP_DESCRIPTION = "Smart Law Traffic System";
 export const APP_VERSION = "1.0.0";
 
 export const ROUTES = {
@@ -7,11 +7,15 @@ export const ROUTES = {
   LOGIN: "/auth/login",
   REGISTER: "/auth/register",
   DASHBOARD: "/dashboard",
+  VIOLATIONS: "/dashboard/violations",
+  VIOLATIONS_DISPUTES: "/dashboard/violations/disputes",
+  VIOLATIONS_SUMMARY: "/dashboard/violations/summary",
+  PLATE: "/dashboard/plate",
+  OFFENDERS: "/dashboard/offenders",
+  USERS: "/dashboard/users",
+  REPORTS: "/dashboard/reports",
   PROFILE: "/dashboard/profile",
   SETTINGS: "/dashboard/settings",
-  ANALYTICS: "/dashboard/analytics",
-  USERS: "/dashboard/users",
-  DOCS: "/dashboard/docs",
 } as const;
 
 export const PROTECTED_ROUTES = ["/dashboard"];
@@ -42,12 +46,18 @@ export const COOKIE_KEYS = {
 } as const;
 
 export const COOKIE_OPTIONS = {
-  expires: 7,       // 7 days
+  expires: 7,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
 };
 
-export const PERSIST_KEY = "nexstarter-root";
+export const PERSIST_KEY = "slts-root";
+
+interface SidebarChildItem {
+  title: string;
+  href: string;
+  isModal?: boolean;
+}
 
 interface SidebarNavItem {
   title: string;
@@ -55,6 +65,7 @@ interface SidebarNavItem {
   icon: string;
   badge?: string;
   requiredRole?: string;
+  children?: SidebarChildItem[];
 }
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
@@ -64,31 +75,39 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     icon: "LayoutDashboard",
   },
   {
-    title: "Analytics",
-    href: "/dashboard/analytics",
-    icon: "BarChart3",
-    badge: "New",
+    title: "Violation",
+    href: "/dashboard/violations",
+    icon: "AlertTriangle",
+    children: [
+      { title: "View Violations", href: "/dashboard/violations", isModal: true },
+      { title: "Disputes", href: "/dashboard/violations/disputes", isModal: true },
+      { title: "Summary", href: "/dashboard/violations/summary", isModal: true },
+    ],
   },
   {
-    title: "Docs",
-    href: "/dashboard/docs",
-    icon: "BookOpen",
+    title: "Run Plate Number",
+    href: "/dashboard/plate",
+    icon: "Search",
   },
   {
-    title: "Users",
-    href: "/dashboard/users",
+    title: "Offenders",
+    href: "/dashboard/offenders",
     icon: "Users",
+  },
+  {
+    title: "User Manager",
+    href: "/dashboard/users",
+    icon: "UserCog",
     requiredRole: "admin",
+    children: [
+      { title: "All Users", href: "/dashboard/users", isModal: false },
+      { title: "Roles", href: "/dashboard/users/roles", isModal: false },
+    ],
   },
   {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: "Settings",
-  },
-  {
-    title: "Profile",
-    href: "/dashboard/profile",
-    icon: "UserCircle",
+    title: "Report",
+    href: "/dashboard/reports",
+    icon: "BarChart2",
   },
 ];
 
@@ -97,8 +116,6 @@ export const THEMES = ["light", "dark", "system"] as const;
 export const TOAST_DURATION = 4000;
 
 export const PAGINATION_PAGE_SIZE = 10;
-
-// ─── JWT ───────────────────────────────────────────────────────────────────────
 
 export const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production-please";
 export const JWT_EXPIRY = "7d";
