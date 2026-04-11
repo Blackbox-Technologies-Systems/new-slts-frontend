@@ -144,7 +144,7 @@ export default function HomePage() {
 									<Link href="/payment-login">Pay Violation</Link>
 								</Button>
 								<Button variant="primary" className="font-medium" asChild>
-									<Link href="/login">Client Login</Link>
+									<Link href="/auth/login">Client Login</Link>
 								</Button>
 							</div>
 
@@ -427,7 +427,7 @@ export default function HomePage() {
 								/>
 							</a>
 						</div>
-						<div className="flex flex-wrap gap-8">
+						<div className="flex flex-wrap gap-8 text-xs">
 							<a
 								href="#"
 								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
@@ -447,7 +447,8 @@ export default function HomePage() {
 							<a
 								href="mailto:info@slts.com.ng"
 								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
-							>info@slts.com.ng
+							>
+								info@slts.com.ng
 							</a>
 							<a href="tel:+2349138808075"
 								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
