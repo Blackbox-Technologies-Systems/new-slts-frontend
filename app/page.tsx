@@ -5,13 +5,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { ArrowLeftRight, ChartNoAxesCombined, Clipboard, Headset, Lightbulb, Menu, Settings, Shield, User, Wallet, X } from "lucide-react";
+import { ArrowLeftRight, ChartNoAxesCombined, Clipboard, Facebook, Headset, Lightbulb, Menu, Settings, Shield, User, Wallet, X } from "lucide-react";
 // import "themify-icons/css/themify-icons.css";
 import {
 	FiSmartphone,
 	FiShield,
 	FiRefreshCw,
 	FiGrid,
+	FiFacebook,
+	FiInstagram,
+	FiTwitter,
 } from "react-icons/fi";
 
 const features = [
@@ -66,22 +69,25 @@ const services = [
 ]
 
 const stats = [
-	{ 	number: '60', 
-		label: 'Support Countries', 
+	{
+		number: '60',
+		label: 'Support Countries',
 		icon: <Shield className="w-11 h-11 opacity-35" />
 	},
-	{ 
-		number: '12K', 
-		label: 'Transactions per hour', 
-		icon: <ArrowLeftRight className="w-11 h-11 opacity-35"/> 
+	{
+		number: '12K',
+		label: 'Transactions per hour',
+		icon: <ArrowLeftRight className="w-11 h-11 opacity-35" />
 	},
-	{ 	number: '5B', 
-		label: 'Largest Transactions', 
-		icon: <ChartNoAxesCombined className="w-11 h-11 opacity-35" /> 
+	{
+		number: '5B',
+		label: 'Largest Transactions',
+		icon: <ChartNoAxesCombined className="w-11 h-11 opacity-35" />
 	},
-	{ 	number: '5', 
-		label: 'Years of Experience', 
-		icon: <User className="w-11 h-11 opacity-35" /> 
+	{
+		number: '5',
+		label: 'Years of Experience',
+		icon: <User className="w-11 h-11 opacity-35" />
 	}
 ]
 
@@ -237,7 +243,7 @@ export default function HomePage() {
 					</div>
 				</section>
 
-				{/* Features section */}
+				{/*-------- Features section --------*/}
 				<section id="features" className="py-20 px-8 bg-[linear-gradient(135deg,#010427_0%,#0A1853_50%,#4f46E5_100%)] text-white max-w-full relative overflow-hidden">
 					<div className="px-2 sm:px-4 sm:mx-8">
 						<h2 className="text-center text-[2.5rem] font-extrabold mb-4">Our System</h2>
@@ -258,7 +264,7 @@ export default function HomePage() {
 					</div>
 				</section>
 
-				{/* Services section */}
+				{/*-------- Services section --------*/}
 				<section className="py-20 sm:px-8 my-0 mx-auto bg-[#F8FAFC]">
 					<div className="sm:gap-3 px-8 sm:px-4 sm:mx-8">
 						<h2 className="text-center text-[2.5rem] font-extrabold text-[#1E293B] mb-4">What We Do</h2>
@@ -280,7 +286,7 @@ export default function HomePage() {
 					</div>
 				</section>
 
-				{/* Stats section */}
+				{/*-------- Stats section --------*/}
 				<section className="py-20 px-9 sm:px-8 my-0 mx-auto bg-[linear-gradient(135deg,#010427_0%,#0A1854_50%,#4F46E5_100%)] text-white relative overflow-hidden">
 					<div className="sm:px-4 sm:mx-8">
 						<div className="grid grid-cols-2 md:grid-cols-4 gap-9 sm:gap-8 my-0 mx-auto relative z-1">
@@ -296,7 +302,162 @@ export default function HomePage() {
 				</section>
 			</main>
 
-			{/* Footer – you may also move this to a component */}
-		</div>
+			{/*-------- Footer --------*/}
+			<footer id="contact" className="bg-primary text-white pt-16 px-8 pb-8 relative">
+				<div className="sm:px-4 sm:mx-8">
+					<div className="my-0 mx-auto grid grid-cols-[2fr_1fr_1fr_1.5fr] gap-12 mb-12 relative z-1">
+						<div>
+							<div className="flex items-center gap-4 mb-6">
+								<Image
+									src="/images/slts-logo.png"
+									alt="SlTS Logo"
+									className="h-auto w-30"
+									width={120}
+									height={20}
+								/>
+							</div>
+							<p className="text-[#94a3b8] leading-[1.8] mb-6 text-justify text-xs">
+								The Strict Liability Traffic Systems (SLTS) is a cutting-edge platform designed to enhance traffic management, enforce road safety laws, and reduce road accidents.
+							</p>
+							<span className="text-[#94a3b8] text-[0.875rem] block text-xs">
+								Copyright © {new Date().getFullYear()} All rights reserved | This website was made by Blackbox Technology Systems Limited
+							</span>
+						</div>
+
+						<div>
+							<h5 className="text-xl font-bold mb-6">Resources</h5>
+							<div className="list-none mb-3 flex flex-col gap-4 text-xs">
+								{["How to Buy Traffic Light", "Traffic Light Overview", "Blog News", "How to Sell Traffic Light"].map((item) => (
+									<Link
+										key={item}
+										href="#"
+										onClick={() => ""}
+										className="cursor-pointer text-[#94A3B8]"
+									>
+										{item}
+									</Link>
+								))}
+							</div>
+						</div>
+
+						<div>
+							<h5 className="text-xl font-bold mb-6">Quick Links</h5>
+							<div className="list-none mb-3 flex flex-col gap-4 text-xs">
+								{["Network Stats", "Traffic Signs", "Governance", "Traffic Regulations"].map((item) => (
+									<Link
+										key={item}
+										href="#"
+										onClick={() => ""}
+										className="cursor-pointer text-[#94A3B8]"
+									>
+										{item}
+									</Link>
+								))}
+							</div>
+						</div>
+
+						<div>
+							<h5 className="text-xl font-bold mb-6">Follow Us</h5>
+							<div className="list-none mb-4 flex gap-4">
+								<a
+									href="#"
+									className="text-[#94A3B8] no-underline w-10 h-10 bg-[#0A1854] rounded-xl flex items-center justify-center transition-all duration-30 hover:bg-[#1877F2] hover:-translate-y-0.75 hover:text-white hover:shadow-[0_4px_15px_#4f46e54d]"
+									aria-label="nav-links"
+								>
+									<FiFacebook className="w-3 h-3" />
+								</a>
+								<a
+									href="#"
+									className="text-[#94A3B8] no-underline w-10 h-10 bg-[#0A1854] rounded-xl flex items-center justify-center transition-all duration-30 hover:bg-[#EA4335] hover:-translate-y-0.75 hover:text-white hover:shadow-[0_4px_15px_#4f46e54d]"
+									aria-label="nav-links"
+								>
+									<Image
+										src="/icons/google-brands-solid-full.svg"
+										alt="Google's Brand Icon"
+										width={16}
+										height={16}
+										className=""
+									/>
+								</a>
+								<a
+									href="#"
+									className="text-[#94A3B8] no-underline w-10 h-10 bg-[#0A1854] rounded-xl flex items-center justify-center transition-all duration-30 hover:bg-[#E4405F] hover:-translate-y-0.75 hover:text-white hover:shadow-[0_4px_15px_#4f46e54d]"
+									aria-label="nav-links"
+								>
+									<FiInstagram className="w-3 h-3 text-[#94A3B8]" />
+								</a>
+								<a
+									href="#"
+									className="text-[#94A3B8] no-underline w-10 h-10 bg-[#0A1854] rounded-xl flex items-center justify-center transition-all duration-30 hover:bg-[#1DA1F2] hover:-translate-y-0.75 hover:text-white hover:shadow-[0_4px_15px_#4f46e54d]"
+									aria-label="nav-links"
+								>
+									<FiTwitter className="w-3 h-3" />
+								</a>
+							</div>
+
+							<h5 className="text-xl font-bold mb-6">Contact Us</h5>
+							<p className="leading-[1.8] mb-6 text-justify text-xs">
+								7, Howeidy Street, Kado, Abuja
+							</p>
+						</div>
+					</div>
+
+					<div className="my-0 mx-auto pt-8 border-t border-t-[#0A1854] flex justify-between items-center text-[#94A3B8] relative z-1">
+						<div className="flex gap-4">
+							<a
+								href="#"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>
+								<Image
+									src="/images/img-appstore.png"
+									alt="App Store"
+									width={100}
+									height={40}
+								/>
+							</a>
+							<a
+								href="#"
+								className=""
+							>
+								<Image
+									src="/images/img-playstore.png"
+									alt="Play Store"
+									width={100}
+									height={40}
+								/>
+							</a>
+						</div>
+						<div className="flex flex-wrap gap-8">
+							<a
+								href="#"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>
+								DPA
+							</a>
+							<a href="#"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>
+								Terms of Use
+							</a>
+							<a href="#"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>
+								Privacy Policy
+							</a>
+							<a
+								href="mailto:info@slts.com.ng"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>info@slts.com.ng
+							</a>
+							<a href="tel:+2349138808075"
+								className="text-[#94A3B8] no-underline transition-colors duration-30 hover:text-[#6366F1]"
+							>
+								+234 913 880 8075
+							</a>
+						</div>
+					</div>
+				</div>
+			</footer >
+		</div >
 	);
 }
