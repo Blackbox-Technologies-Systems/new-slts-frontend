@@ -251,6 +251,11 @@
 	}
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
 /* ─── SCROLLBAR STYLING ─────────────────────────────────────────────────────────
  * Custom thin scrollbars matching the application's design language */
 ::-webkit-scrollbar {
