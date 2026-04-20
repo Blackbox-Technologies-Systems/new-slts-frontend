@@ -11,11 +11,13 @@ import {
 	Activity,
 	ArrowUp,
 	ArrowDown,
+	ChartNoAxesColumn,
 } from "lucide-react";
 import type { DashboardStat } from "@/types";
 
 const ICON_MAP: Record<string, React.ReactNode> = {
 	BarChart3: <BarChart3 className="h-5 w-5" />,
+	ChartNoAxesColumn: <ChartNoAxesColumn className="h-5 w-5" />,
 	CheckCircle2: <CheckCircle2 className="h-5 w-5" />,
 	AlertTriangle: <AlertTriangle className="h-5 w-5" />,
 	Users: <Users className="h-5 w-5" />,
@@ -78,13 +80,13 @@ export function ViolationStatsCard({
 								{stat.prefix}
 							</span>
 						)}
-						<span className="text-4xl font-semibold text-primary tracking-tight">
+						<span className="text-3xl font-semibold text-primary">
 							{formatValue(stat.value)}
 						</span>
 					</div>
 
 					{/* Title */}
-					<p className="text-sm text-muted-foreground mt-1">{stat.title}</p>
+					<p className="text-sm text-muted-foreground mt-3">{stat.title}</p>
 				</div>
 			</div>
 		</div>

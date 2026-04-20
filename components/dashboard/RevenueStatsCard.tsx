@@ -1,6 +1,14 @@
 "use client";
 
 import { Wallet, Clock, Activity, Banknote } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface ProgressBarProps {
+	/** Value between 0–100 representing percentage filled */
+	value: number;
+	/** Optional accessible label, e.g. "₦38,000 of ₦95.8M collected" */
+	label?: string;
+}
 
 interface RevenueStatsCardProps {
 	label: string;
@@ -9,6 +17,8 @@ interface RevenueStatsCardProps {
 	subtitle?: string;
 	icon?: "money" | "wallet" | "clock" | "activity";
 	miniChart?: boolean;
+	/** When provided, renders a progress bar at the bottom of the card */
+	progress?: ProgressBarProps;
 	className?: string;
 }
 
@@ -26,11 +36,20 @@ export function RevenueStatsCard({
 	subtitle,
 	icon = "wallet",
 	miniChart = false,
+	progress,
 	className,
 }: RevenueStatsCardProps) {
+	const progressValue = progress
+		? Math.min(100, Math.max(0, progress.value))
+		: 0;
+
 	return (
 		<div
-			className={`rounded-2xl bg-card border-l-4 border-primary p-4 dark:bg-card dark:border-border ${className}`}
+			className={cn(
+				"rounded-2xl bg-card border-l-4 border-primary pt-4 px-4 dark:bg-card dark:border-border",
+				progress || miniChart ? "pb-0" : "pb-0",
+				className,
+			)}
 		>
 			{/* Label with icon */}
 			<div className="flex items-center gap-2 mb-3">
@@ -42,15 +61,15 @@ export function RevenueStatsCard({
 
 			{/* Value */}
 			<div className="flex items-baseline gap-1">
-				{/* <span className="text-4xl font-semibold text-primary">{prefix}</span> */}
-				<span className="text-4xl font-bold text-primary tracking-tight">
+				<span className="text-2xl font-bold text-primary tracking-tighter">
 					{prefix}
 					{value}
 				</span>
 			</div>
+
 			{/* Subtitle */}
 			{subtitle && (
-				<p className="text-xs text-muted-foreground/70 mt-2">{subtitle}</p>
+				<p className="text-xs text-muted-foreground mt-3">{subtitle}</p>
 			)}
 
 			{/* Mini bar chart */}
@@ -63,6 +82,25 @@ export function RevenueStatsCard({
 							style={{ height: `${height}%` }}
 						/>
 					))}
+				</div>
+			)}
+
+			{/* Optional Progress Bar */}
+			{progress && (
+				<div className="mt-3">
+					<div
+						role="progressbar"
+						aria-valuenow={progressValue}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-label={progress.label ?? `${progressValue}% progress`}
+						className="h-1.5 w-full rounded-full bg-[#F3F4F6] overflow-hidden"
+					>
+						<div
+							className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+							style={{ width: `${progressValue}%` }}
+						/>
+					</div>
 				</div>
 			)}
 		</div>
