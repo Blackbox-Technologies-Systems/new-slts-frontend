@@ -1,28 +1,57 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import {
+	ChevronLeft,
+	ChevronRight,
+	Search,
+	Download,
+	Filter,
+	Calendar,
+	Eye,
+	Edit2,
+	Plus,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import type { Violation, ViolationStatus } from "@/types";
 
 interface ViolationsTableProps {
 	violations: Violation[];
 	className?: string;
+	variant?: "compact" | "full";
+	showFilters?: boolean;
+	showCheckboxes?: boolean;
+	showPaymentColumn?: boolean;
+	showActions?: boolean;
+	onCreateViolation?: () => void;
+	title?: string;
 }
 
 const STATUS_STYLES: Record<ViolationStatus, string> = {
 	submitted: "bg-slate-100 text-slate-700 border-slate-200",
 	approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
 	rejected: "bg-red-50 text-red-700 border-red-200",
-	pending: "bg-amber-50 text-amber-700 border-amber-200",
 };
 
 const STATUS_LABELS: Record<ViolationStatus, string> = {
 	submitted: "Submitted",
 	approved: "Approved",
 	rejected: "Rejected",
+};
+
+const PAYMENT_STATUS_STYLES: Record<string, string> = {
+	paid: "bg-emerald-50 text-emerald-700 border-emerald-200",
+	// unpaid: "bg-slate-100 text-slate-700 border-slate-200",
+	pending: "bg-amber-50 text-amber-700 border-amber-200",
+	unpaid: "bg-red-50 text-red-700 border-red-200",
+};
+
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+	paid: "Paid",
+	unpaid: "Unpaid",
 	pending: "Pending",
 };
 
@@ -33,12 +62,34 @@ const getRowClass = (rowIndex: number) => {
 export function ViolationsTable({
 	violations,
 	className,
+	variant = "compact",
+	showFilters = false,
+	showCheckboxes = false,
+	showPaymentColumn = false,
+	showActions = false,
+	onCreateViolation,
+	title = "Recent Violations",
 }: ViolationsTableProps) {
 	const [currentPage, setCurrentPage] = useState(1);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 	const itemsPerPage = 10;
-	const totalPages = Math.ceil(violations.length / itemsPerPage);
 
-	const paginatedViolations = violations.slice(
+	// Filter violations based on search query
+	const filteredViolations =
+		showFilters && searchQuery
+			? violations.filter(
+					(v) =>
+						v.offender.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						v.pcn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						v.offenseType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						v.plateNo.toLowerCase().includes(searchQuery.toLowerCase()),
+				)
+			: violations;
+
+	const totalPages = Math.ceil(filteredViolations.length / itemsPerPage);
+
+	const paginatedViolations = filteredViolations.slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage,
 	);
@@ -67,6 +118,24 @@ export function ViolationsTable({
 		return new Intl.NumberFormat("en-NG").format(amount);
 	};
 
+	const toggleRowSelection = (id: string) => {
+		const newSelected = new Set(selectedRows);
+		if (newSelected.has(id)) {
+			newSelected.delete(id);
+		} else {
+			newSelected.add(id);
+		}
+		setSelectedRows(newSelected);
+	};
+
+	const toggleAllRows = () => {
+		if (selectedRows.size === paginatedViolations.length) {
+			setSelectedRows(new Set());
+		} else {
+			setSelectedRows(new Set(paginatedViolations.map((v) => v.id)));
+		}
+	};
+
 	const getPageNumbers = () => {
 		const pages: (number | string)[] = [];
 
@@ -85,49 +154,152 @@ export function ViolationsTable({
 		return pages;
 	};
 
+	// Build headers dynamically based on props
+	const buildHeaders = () => {
+		const headers: { key: string; label: string; className?: string }[] = [];
+
+		if (showCheckboxes) {
+			headers.push({ key: "checkbox", label: "", className: "w-10" });
+		}
+
+		headers.push(
+			{ key: "sn", label: "S/N" },
+			{ key: "offender", label: "OFFENDER NAME" },
+			{ key: "pcn", label: "PCN" },
+			{ key: "offenseType", label: "OFFENSE TYPE" },
+			{ key: "plateNo", label: "PLATE NO." },
+			{ key: "amount", label: "AMOUNT" },
+			{ key: "violationDate", label: "VIOLATION DATE" },
+			{ key: "status", label: "STATUS" },
+		);
+
+		if (showPaymentColumn) {
+			headers.push({ key: "payment", label: "PAYMENT" });
+		}
+
+		if (showActions) {
+			headers.push({ key: "actions", label: "ACTION", className: "w-24" });
+		}
+
+		return headers;
+	};
+
+	const headers = buildHeaders();
+
 	return (
-		<div className={`bg-white rounded-xl overflow-hidden ${className}`}>
-			{/* Table Header */}
-			<div className="flex items-center justify-between px-6 py-4">
-				<h3 className="text-lg text-primary font-semibold">
-					Recent Violations
-				</h3>
-				<Button
-					variant="ghost"
-					size="sm"
-					className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
-				>
-					View All →
-				</Button>
-			</div>
+		<div className={cn("bg-white rounded-xl overflow-hidden", className)}>
+			{/* Header Section */}
+			{showFilters ? (
+				<div className="flex flex-col gap-4 px-6 py-4">
+					{/* Title Row with Create Button */}
+					<div className="flex items-center justify-between gap-4 flex-wrap">
+						<h3 className="text-lg text-primary font-semibold">{title}</h3>
+						{/* <Button
+							size="sm"
+							onClick={onCreateViolation}
+							className="bg-primary hover:bg-primary/90 text-white"
+						>
+							<Plus className="h-4 w-4 mr-1.5" />
+							Create Violation
+						</Button> */}
+						<div className="flex items-center justify-between gap-4 flex-wrap">
+							<div className="relative flex-1 max-w-md border-2 border-muted-foreground rounded-md">
+								<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+								<Input
+									placeholder="Search by name, PCN..."
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									className="pl-10 h-9"
+								/>
+							</div>
+							<div className="flex items-center gap-2">
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-9 text-sm border-2 border-muted-foreground cursor-pointer"
+								>
+									<Calendar className="h-4 w-4 mr-1.5" />6 Feb 2025, 2025 - 12
+									Feb, 2025
+								</Button>
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-9 border border-muted-foreground text-sm cursor-pointer"
+								>
+									<Filter className="h-4 w-4 mr-1.5" />
+									Filter
+								</Button>
+								<Button variant="ghost" size="sm" className="h-9">
+									<Download className="h-4 w-4 mr-1.5" />
+									Export
+								</Button>
+							</div>
+						</div>
+					</div>
+					{/* Filter Row */}
+				</div>
+			) : (
+				/* Compact Header */
+				<div className="flex items-center justify-between px-6 py-4">
+					<h3 className="text-lg text-primary font-semibold">{title}</h3>
+					<Button
+						variant="ghost"
+						size="sm"
+						className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
+					>
+						View All →
+					</Button>
+				</div>
+			)}
 
 			{/* Table */}
 			<div className="overflow-x-auto">
 				<table className="w-full">
 					<thead className="bg-background">
 						<tr className="text-left">
-							{[
-								"S/N",
-								"OFFENDER NAME",
-								"PCN",
-								"OFFENSE TYPE",
-								"PLATE NO.",
-								"AMOUNT",
-								"VIOLATION DATE",
-								"STATUS",
-							].map((header) => (
+							{headers.map((header) => (
 								<th
-									key={header}
-									className="px-4 py-3 text-xs font-bold text-primary uppercase tracking-wider whitespace-nowrap"
+									key={header.key}
+									className={cn(
+										"px-4 py-3 text-xs font-bold text-primary uppercase tracking-wider whitespace-nowrap",
+										header.className,
+									)}
 								>
-									{header}
+									{header.key === "checkbox" ? (
+										<input
+											type="checkbox"
+											checked={
+												selectedRows.size === paginatedViolations.length &&
+												paginatedViolations.length > 0
+											}
+											onChange={toggleAllRows}
+											className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+											aria-label="Select all rows"
+										/>
+									) : (
+										header.label
+									)}
 								</th>
 							))}
 						</tr>
 					</thead>
 					<tbody className="divide-y">
 						{paginatedViolations.map((violation, index) => (
-							<tr key={violation.id} className={cn("transition-colors", getRowClass(index))}>
+							<tr
+								key={violation.id}
+								className={cn("transition-colors", getRowClass(index))}
+							>
+								{showCheckboxes && (
+									<td className="px-4 py-4">
+										<input
+											type="checkbox"
+											checked={selectedRows.has(violation.id)}
+											onChange={() => toggleRowSelection(violation.id)}
+											className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+											aria-label={`Select row ${violation.sn}`}
+										/>
+									</td>
+								)}
 								<td className="px-4 py-4 text-sm text-muted-foreground">
 									{violation.sn}
 								</td>
@@ -175,6 +347,45 @@ export function ViolationsTable({
 										{STATUS_LABELS[violation.status]}
 									</Badge>
 								</td>
+								{showPaymentColumn && (
+									<td className="px-4 py-4">
+										<Badge
+											variant="outline"
+											className={cn(
+												"text-xs font-medium px-2.5 py-0.5 rounded-full",
+												PAYMENT_STATUS_STYLES[
+													violation.paymentStatus || "unpaid"
+												],
+											)}
+										>
+											{
+												PAYMENT_STATUS_LABELS[
+													violation.paymentStatus || "unpaid"
+												]
+											}
+										</Badge>
+									</td>
+								)}
+								{showActions && (
+									<td className="px-4 py-4">
+										<div className="flex items-center gap-1">
+											<Button
+												variant="ghost"
+												size="icon"
+												className="h-8 w-8 text-muted-foreground hover:text-primary"
+											>
+												<Eye className="h-4 w-4" />
+											</Button>
+											<Button
+												variant="ghost"
+												size="icon"
+												className="h-8 w-8 text-muted-foreground hover:text-primary"
+											>
+												<Edit2 className="h-4 w-4" />
+											</Button>
+										</div>
+									</td>
+								)}
 							</tr>
 						))}
 					</tbody>
@@ -185,8 +396,9 @@ export function ViolationsTable({
 			<div className="flex items-center bg-background justify-between px-6 py-4">
 				<div className="text-sm text-muted-foreground">
 					Showing {(currentPage - 1) * itemsPerPage + 1} -
-					{Math.min(currentPage * itemsPerPage, violations.length)} of{" "}
-					{new Intl.NumberFormat("en-US").format(violations.length)} results
+					{Math.min(currentPage * itemsPerPage, filteredViolations.length)} of{" "}
+					{new Intl.NumberFormat("en-US").format(filteredViolations.length)}{" "}
+					results
 				</div>
 
 				<div className="flex items-center gap-1">

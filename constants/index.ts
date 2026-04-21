@@ -79,7 +79,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     href: "/dashboard/violations",
     icon: "AlertTriangle",
     children: [
-      { title: "View Violations", href: "/dashboard/violations", isModal: true },
+      { title: "View Violations", href: "/dashboard/violations", isModal: false },
       { title: "Disputes", href: "/dashboard/violations/disputes", isModal: true },
       { title: "Summary", href: "/dashboard/violations/summary", isModal: true },
     ],
