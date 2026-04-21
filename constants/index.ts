@@ -27,6 +27,9 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: "/auth/login",
+    FORGOTPASSSWORD: "/auth/forgot-password",
+    VERIFYFORGOTPASSWORD: "/auth/verify-forgot-password",
+    VERIFYOTP: "/auth/verify-login-otp",
     REGISTER: "/auth/register",
     LOGOUT: "/auth/logout",
     REFRESH: "/auth/refresh",
