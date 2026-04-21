@@ -17,12 +17,12 @@ export const authService = {
     token: string;
     user: User
   }> {
-    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.VERIFYOTP, payload)
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_OTP, payload)
     return data;
   },
 
   async forgotPassword(email: string): Promise<{ message: string }> {
-    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.FORGOTPASSSWORD, { email })
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, { email })
     return data;
   },
 
@@ -33,7 +33,7 @@ export const authService = {
     message: string;
     reset_token: string
   }> {
-    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.VERIFYFORGOTPASSWORD, payload)
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_FORGOT_PASSWORD, payload)
     return data;
   },
 
@@ -42,7 +42,7 @@ export const authService = {
     password: string
     password_confirmation: string
   }): Promise<{ message: string }> {
-    const { data } = await apiClient.post("/auth/set-forgot-password", payload)
+    const { data } = await apiClient.post(API_ENDPOINTS.AUTH.SET_FORGOT_PASSWORD, payload)
     return data;
   },
 
