@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { ResendPaymentModal } from "@/components/dashboard/ResendPaymentModal";
 import type { Violation, ViolationStatus } from "@/types";
 
 interface ViolationsTableProps {
@@ -76,7 +77,13 @@ export function ViolationsTable({
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 	const [dateRange, setDateRange] = useState<DateRange | undefined>();
+	const [isResendModalOpen, setIsResendModalOpen] = useState(false);
 	const itemsPerPage = 10;
+
+	// Calculate selected amount
+	const totalSelectedAmount = violations
+		.filter((v) => selectedRows.has(v.id))
+		.reduce((sum, v) => sum + v.amount, 0);
 
 	// Filter violations based on search query and date range
 	const filteredViolations = violations.filter((v) => {
@@ -468,6 +475,57 @@ export function ViolationsTable({
 					</Button>
 				</div>
 			</div>
+
+			{/* Floating Bulk Action Bar */}
+			{selectedRows.size > 0 && (
+				<div className="bg-primary rounded-lg shadow-xl px-6 py-4 flex items-center justify-between text-white z-40 animate-in slide-in-from-bottom-5">
+					<div className="flex items-center gap-6">
+						<div className="flex items-center gap-2">
+							<span className="h-2 w-2 rounded-full bg-emerald-500" />
+							<span className="font-medium">
+								{selectedRows.size} violation
+								{selectedRows.size !== 1 ? "s" : ""} selected
+							</span>
+						</div>
+						<div className="hidden sm:block h-6 w-px bg-primary" />
+						<div className="font-semibold hidden sm:block">
+							Total ₦{formatCurrency(totalSelectedAmount)}
+						</div>
+					</div>
+					<div className="flex items-center gap-4">
+						<div className="font-semibold sm:hidden mr-2">
+							Total ₦{formatCurrency(totalSelectedAmount)}
+						</div>
+						<Button
+							variant="outline"
+							className="bg-transparent border-muted-foreground text-white hover:bg-primary/80 hover:text-white"
+							onClick={() => setSelectedRows(new Set())}
+						>
+							Clear Selection
+						</Button>
+						<Button
+							className="bg-white text-primary hover:bg-slate-200 hover:text-primary cursor-pointer"
+							onClick={() => setIsResendModalOpen(true)}
+						>
+							{selectedRows.size} Violation{selectedRows.size !== 1 ? "s" : ""}{" "}
+							Resend Payment Link
+						</Button>
+					</div>
+				</div>
+			)}
+
+			<ResendPaymentModal
+				isOpen={isResendModalOpen}
+				onClose={() => setIsResendModalOpen(false)}
+				selectedCount={selectedRows.size}
+				onSend={(email, phone) => {
+					console.log(
+						`Sending payment links to ${selectedRows.size} violations`,
+						{ email, phone },
+					);
+					setSelectedRows(new Set());
+				}}
+			/>
 		</div>
 	);
 }
