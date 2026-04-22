@@ -218,7 +218,7 @@ export default function ViewViolationsPage() {
 				<Button
 					size="sm"
 					onClick={handleCreateViolation}
-					className="bg-primary hover:bg-primary/90 text-white"
+					className="bg-primary hover:bg-primary/90 text-white cursor-pointer"
 				>
 					<Plus className="h-4 w-4 mr-1.5" />
 					Create Violation

@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import {
 	ChevronLeft,
 	ChevronRight,
 	Search,
 	Download,
 	Filter,
-	Calendar,
 	Eye,
 	Edit2,
 	Plus,
@@ -16,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import type { Violation, ViolationStatus } from "@/types";
 
 interface ViolationsTableProps {
@@ -73,19 +75,36 @@ export function ViolationsTable({
 	const [currentPage, setCurrentPage] = useState(1);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+	const [dateRange, setDateRange] = useState<DateRange | undefined>();
 	const itemsPerPage = 10;
 
-	// Filter violations based on search query
-	const filteredViolations =
-		showFilters && searchQuery
-			? violations.filter(
-					(v) =>
-						v.offender.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						v.pcn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						v.offenseType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						v.plateNo.toLowerCase().includes(searchQuery.toLowerCase()),
-				)
-			: violations;
+	// Filter violations based on search query and date range
+	const filteredViolations = violations.filter((v) => {
+		// Text filter
+		const matchesSearch =
+			!showFilters ||
+			!searchQuery ||
+			v.offender.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			v.pcn.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			v.offenseType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			v.plateNo.toLowerCase().includes(searchQuery.toLowerCase());
+
+		// Date filter
+		let matchesDate = true;
+		if (dateRange?.from) {
+			const violationDate = new Date(v.violationDate);
+			const fromDate = startOfDay(dateRange.from);
+			const toDate = dateRange.to
+				? endOfDay(dateRange.to)
+				: endOfDay(dateRange.from);
+			matchesDate = isWithinInterval(violationDate, {
+				start: fromDate,
+				end: toDate,
+			});
+		}
+
+		return matchesSearch && matchesDate;
+	});
 
 	const totalPages = Math.ceil(filteredViolations.length / itemsPerPage);
 
@@ -159,7 +178,11 @@ export function ViolationsTable({
 		const headers: { key: string; label: string; className?: string }[] = [];
 
 		if (showCheckboxes) {
-			headers.push({ key: "checkbox", label: "", className: "w-10" });
+			headers.push({
+				key: "checkbox",
+				label: "",
+				className: "w-10",
+			});
 		}
 
 		headers.push(
@@ -213,14 +236,11 @@ export function ViolationsTable({
 								/>
 							</div>
 							<div className="flex items-center gap-2">
-								<Button
-									variant="ghost"
-									size="sm"
-									className="h-9 text-sm border-2 border-muted-foreground cursor-pointer"
-								>
-									<Calendar className="h-4 w-4 mr-1.5" />6 Feb 2025, 2025 - 12
-									Feb, 2025
-								</Button>
+								<DateRangePicker
+									date={dateRange}
+									onDateChange={setDateRange}
+									className="h-9 border border-muted-foreground rounded-md cursor-pointer"
+								/>
 								<Button
 									variant="ghost"
 									size="sm"
@@ -229,7 +249,11 @@ export function ViolationsTable({
 									<Filter className="h-4 w-4 mr-1.5" />
 									Filter
 								</Button>
-								<Button variant="ghost" size="sm" className="h-9">
+								<Button
+									variant="ghost"
+									size="sm"
+									className="h-9 cursor-pointer"
+								>
 									<Download className="h-4 w-4 mr-1.5" />
 									Export
 								</Button>
@@ -273,7 +297,7 @@ export function ViolationsTable({
 												paginatedViolations.length > 0
 											}
 											onChange={toggleAllRows}
-											className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+											className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
 											aria-label="Select all rows"
 										/>
 									) : (
@@ -295,7 +319,7 @@ export function ViolationsTable({
 											type="checkbox"
 											checked={selectedRows.has(violation.id)}
 											onChange={() => toggleRowSelection(violation.id)}
-											className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+											className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
 											aria-label={`Select row ${violation.sn}`}
 										/>
 									</td>
@@ -403,9 +427,9 @@ export function ViolationsTable({
 
 				<div className="flex items-center gap-1">
 					<Button
-						variant="outline"
+						variant="secondary"
 						size="icon"
-						className="h-8 w-8"
+						className="h-8 w-8 hover:cursor-pointer border border-muted-foreground"
 						onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
 						disabled={currentPage === 1}
 					>
@@ -418,11 +442,12 @@ export function ViolationsTable({
 								<span className="px-2 text-muted-foreground">... </span>
 							) : (
 								<Button
-									variant={currentPage === page ? "default" : "outline"}
+									variant={currentPage === page ? "default" : "ghost"}
 									size="sm"
 									className={cn(
-										"h-8 w-8 text-xs",
-										currentPage === page && "bg-primary hover:bg-primary/80",
+										"h-8 w-8 text-xs hover:cursor-pointer",
+										currentPage === page &&
+											"bg-primary hover:bg-primary/80 hover:cursor-default",
 									)}
 									onClick={() => setCurrentPage(page as number)}
 								>
@@ -433,9 +458,9 @@ export function ViolationsTable({
 					))}
 
 					<Button
-						variant="outline"
+						variant="secondary"
 						size="icon"
-						className="h-8 w-8"
+						className="h-8 w-8 hover:cursor-pointer border border-muted-foreground"
 						onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
 						disabled={currentPage === totalPages}
 					>
