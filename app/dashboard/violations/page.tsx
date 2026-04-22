@@ -204,7 +204,7 @@ export default function ViewViolationsPage() {
 	const handleCreateViolation = () => {
 		// Navigate to create violation or open modal
 		// router.push('/dashboard/violations/create');
-		console.log("Create violation clicked");
+		alert("Create violation clicked");
 	};
 
 	return (
@@ -212,7 +212,7 @@ export default function ViewViolationsPage() {
 			<div className="flex items-center justify-between">
 				<PageHeader
 					title="View Violation"
-					description="Violation"
+					// description="Violation"
 					className="mt-0"
 				/>
 				<Button
