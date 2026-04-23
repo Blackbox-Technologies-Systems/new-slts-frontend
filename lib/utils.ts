@@ -6,11 +6,25 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(dateStr: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
     month: "short",
-    day: "numeric",
-  }).format(new Date(dateStr));
+    year: "numeric",
+  }).toUpperCase();
+}
+
+export function formatTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("en-NG").format(amount);
 }
 
 export function formatRelativeTime(dateStr: string): string {

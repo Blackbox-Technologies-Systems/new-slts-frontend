@@ -10,7 +10,7 @@ import {
 import { RevenueAlert } from "@/components/dashboard/shared/RevenueAlert";
 import { useLocalTableData } from "@/hooks/useLocalTableData";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatDate, formatTime, formatCurrency } from "@/lib/utils";
 import type { DashboardStat, Violation, ViolationStatus } from "@/types";
 
 // ─── DUMMY DATA ───────────────────────────────────────────────────────────────
@@ -153,30 +153,6 @@ const STATUS_LABELS: Record<ViolationStatus, string> = {
 	submitted: "Submitted",
 	approved: "Approved",
 	rejected: "Rejected",
-};
-
-const formatDate = (dateStr: string) => {
-	const date = new Date(dateStr);
-	return date
-		.toLocaleDateString("en-GB", {
-			day: "2-digit",
-			month: "short",
-			year: "numeric",
-		})
-		.toUpperCase();
-};
-
-const formatTime = (dateStr: string) => {
-	const date = new Date(dateStr);
-	return date.toLocaleTimeString("en-US", {
-		hour: "numeric",
-		minute: "2-digit",
-		hour12: true,
-	});
-};
-
-const formatCurrency = (amount: number) => {
-	return new Intl.NumberFormat("en-NG").format(amount);
 };
 
 export default function DashboardPage() {

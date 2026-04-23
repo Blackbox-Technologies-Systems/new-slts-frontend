@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { Eye, Edit2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatDate, formatTime, formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,30 +48,6 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
 	paid: "Paid",
 	unpaid: "Unpaid",
 	pending: "Pending",
-};
-
-const formatDate = (dateStr: string) => {
-	const date = new Date(dateStr);
-	return date
-		.toLocaleDateString("en-GB", {
-			day: "2-digit",
-			month: "short",
-			year: "numeric",
-		})
-		.toUpperCase();
-};
-
-const formatTime = (dateStr: string) => {
-	const date = new Date(dateStr);
-	return date.toLocaleTimeString("en-US", {
-		hour: "numeric",
-		minute: "2-digit",
-		hour12: true,
-	});
-};
-
-const formatCurrency = (amount: number) => {
-	return new Intl.NumberFormat("en-NG").format(amount);
 };
 
 export function ViolationsTable({
