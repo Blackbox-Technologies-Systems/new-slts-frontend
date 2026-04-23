@@ -1,40 +1,40 @@
 "use client";
 
-import { Menu, Bell, SlidersHorizontal } from "lucide-react";
+import { Bell, SlidersHorizontal } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUI } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { MODAL_KEYS } from "@/constants";
 
 interface TopbarProps {
   notificationCount?: number;
 }
 
 export function Topbar({ notificationCount = 3 }: TopbarProps) {
-
-    const { sidebarCollapsed, toggleSidebar } = useUI();
+  const { sidebarCollapsed, openModal } = useUI();
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 flex h-16 items-center gap-4  px-4 md:pr-6 md:pl-3",
+        "sticky top-0 z-30 flex h-16 items-center gap-4 px-4 md:pr-6 md:pl-3",
         "bg-[#0B1629] border-b border-white/5"
       )}
     >
-      {/* Left – sidebar toggle + logo */}
+      {/* Left – logo (only when sidebar is collapsed) */}
       <div className="flex items-center gap-3 shrink-0">
-       
-        {sidebarCollapsed && ( <div className="hidden md:flex items-center gap-2">
-          <Image
-            src="/images/slts-logo.png"
-            alt="SLTS Logo"
-            width={100}
-            height={100}
-            className="shrink-0"
-          />
-         
-        </div> )}
+        {sidebarCollapsed && (
+          <div className="hidden md:flex items-center gap-2">
+            <Image
+              src="/images/slts-logo.png"
+              alt="SLTS Logo"
+              width={100}
+              height={100}
+              className="shrink-0"
+            />
+          </div>
+        )}
       </div>
 
       {/* Center – search */}
@@ -58,7 +58,7 @@ export function Topbar({ notificationCount = 3 }: TopbarProps) {
             placeholder="violations, offenders, disputes, reports..."
             className={cn(
               "pl-6 h-9 text-sm rounded-lg",
-              "bg-white/5 border-white b0order-2 text-white placeholder:text-white/25",
+              "bg-white/5 border-white/10 text-white placeholder:text-white/25",
               "focus-visible:ring-white/20 focus-visible:border-white/20",
               "transition-colors"
             )}
@@ -76,10 +76,11 @@ export function Topbar({ notificationCount = 3 }: TopbarProps) {
           )}
         </button>
 
-        {/* Global Filter button */}
+        {/* Global Filter button — opens modal via Redux */}
         <Button
           variant="outline"
           size="sm"
+          onClick={() => openModal(MODAL_KEYS.GLOBAL_FILTER)}
           className={cn(
             "h-9 px-4 text-sm font-medium rounded-md gap-1.5",
             "bg-transparent border-white/15 text-white",
