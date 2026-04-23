@@ -108,7 +108,7 @@ export function Sidebar() {
   const inactiveRow = "text-white/50 hover:text-white hover:bg-white/5 border-l-4 border-transparent pl-2";
 
   // ── Logout handler placeholder ──────────────────────────────────────────────
-  // Auth/logout functionality is handled separately — wire up here when ready:
+  // Auth/logout functionality is handled separately  wire up here when ready:
   // const { logout } = useAuth();
   const handleLogout = () => {
     setProfilePopupOpen(false);
