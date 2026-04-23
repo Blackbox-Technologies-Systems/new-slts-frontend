@@ -36,7 +36,8 @@ function getStrength(pwd: string): { score: number; label: string; color: string
 function SetForgotPasswordContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
-    const resetToken = searchParams.get("reset_token") ?? ""
+    const email = searchParams.get("email") ?? ""
+    const otp = searchParams.get("otp") ?? ""
 
     const [password, setPassword] = useState("")
     const [confirm, setConfirm] = useState("")
@@ -58,21 +59,17 @@ function SetForgotPasswordContent() {
         setLoading(true)
 
         try {
-            const res = await authService.setForgotPassword({
-                reset_token: resetToken,
+            await authService.setForgotPassword({
+                email: email,
+                otp: otp,
                 password,
                 password_confirmation: confirm,
             })
-
-            if (res.message === "success") {
-                setDone(true)
-                setTimeout(() => router.push("/auth/login"), 2000)
-            } else {
-                setError(res.message ?? "Something went wrong. Please try again.")
-            }
+            setDone(true)
+            setTimeout(() => router.push("/auth/login"), 2000)
         } catch (err: unknown) {
             const e = err as { response?: { data?: { message?: string } } }
-            setError(e.response?.data?.message ?? "Network error. Please try again.")
+            setError(e.response?.data?.message ?? "Something went wrong. Please try again.")
         } finally {
             setLoading(false)
         }

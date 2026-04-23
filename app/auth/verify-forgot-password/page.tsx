@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ShieldCheck, Loader2, ArrowLeft } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { authService } from "@/services/authService"
+import { toast } from "sonner"
 
 function VerifyForgotPasswordContent() {
     const router = useRouter()
@@ -21,18 +22,15 @@ function VerifyForgotPasswordContent() {
         setLoading(true)
 
         try {
-            const res = await authService.verifyForgotPasswordOtp({ email, otp: otp.trim() })
+            await authService.verifyForgotPasswordOtp({ email, otp: otp.trim() })
 
-            if (res.message === "success") {
-                router.push(
-                    `/auth/set-forgot-password?reset_token=${encodeURIComponent(res.reset_token)}`
-                )
-            } else {
-                setError(res.message ?? "Invalid code. Please try again.")
-            }
+            toast.success("OTP verified. You may now set a new password.")
+            router.push(
+                `/auth/set-forgot-password?otp=${encodeURIComponent(otp.trim())}&email=${encodeURIComponent(email)}`
+            )
         } catch (err: unknown) {
             const e = err as { response?: { data?: { message?: string } } }
-            setError(e.response?.data?.message ?? "Network error. Please try again.")
+            setError(e.response?.data?.message ?? "Invalid code or Network error. Please try again.")
         } finally {
             setLoading(false)
         }
@@ -47,10 +45,6 @@ function VerifyForgotPasswordContent() {
 
     const primaryBtn =
         "w-full py-4 bg-[#010427] dark:bg-slate-800 text-white rounded-2xl text-base font-bold shadow-lg hover:bg-[#02073d] dark:hover:bg-slate-700 hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center"
-
-    const secondaryBtn =
-        "w-full py-4 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center gap-2 transition-all"
-
     return (
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
             <div
