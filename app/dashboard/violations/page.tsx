@@ -1,8 +1,8 @@
 "use client";
 
 import { PageHeader } from "@/components/common/PageHeader";
-import { ViolationsTable } from "@/components/dashboard/ViolationsTable";
-import { RevenueAlert } from "@/components/dashboard/RevenueAlert";
+import { ViolationsTable } from "@/components/dashboard/violations/ViolationsTable";
+import { RevenueAlert } from "@/components/dashboard/shared/RevenueAlert";
 import type { Violation } from "@/types";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";

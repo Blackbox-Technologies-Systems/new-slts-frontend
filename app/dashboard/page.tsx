@@ -3,9 +3,15 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { ViolationStatsCard } from "@/components/dashboard/ViolationStatsCard";
 import { RevenueStatsCard } from "@/components/dashboard/RevenueStatsCard";
-import { ViolationsTable } from "@/components/dashboard/ViolationsTable";
-import { RevenueAlert } from "@/components/dashboard/RevenueAlert";
-import type { DashboardStat, Violation } from "@/types";
+import {
+	BaseTable,
+	BaseTableColumn,
+} from "@/components/dashboard/shared/BaseTable";
+import { RevenueAlert } from "@/components/dashboard/shared/RevenueAlert";
+import { useLocalTableData } from "@/hooks/useLocalTableData";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import type { DashboardStat, Violation, ViolationStatus } from "@/types";
 
 // ─── DUMMY DATA ───────────────────────────────────────────────────────────────
 // Would replace these with API calls when ready
@@ -137,7 +143,111 @@ const VIOLATIONS_DATA: Violation[] = [
 	})),
 ];
 
+const STATUS_STYLES: Record<ViolationStatus, string> = {
+	submitted: "bg-slate-100 text-slate-700 border-slate-200",
+	approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+	rejected: "bg-red-50 text-red-700 border-red-200",
+};
+
+const STATUS_LABELS: Record<ViolationStatus, string> = {
+	submitted: "Submitted",
+	approved: "Approved",
+	rejected: "Rejected",
+};
+
+const formatDate = (dateStr: string) => {
+	const date = new Date(dateStr);
+	return date
+		.toLocaleDateString("en-GB", {
+			day: "2-digit",
+			month: "short",
+			year: "numeric",
+		})
+		.toUpperCase();
+};
+
+const formatTime = (dateStr: string) => {
+	const date = new Date(dateStr);
+	return date.toLocaleTimeString("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true,
+	});
+};
+
+const formatCurrency = (amount: number) => {
+	return new Intl.NumberFormat("en-NG").format(amount);
+};
+
 export default function DashboardPage() {
+	const { currentPage, totalPages, totalItems, paginatedData, setCurrentPage } =
+		useLocalTableData<Violation>({
+			data: VIOLATIONS_DATA,
+			itemsPerPage: 5, // Keep it compact for the dashboard overview
+		});
+
+	const columns: BaseTableColumn[] = [
+		{ key: "sn", label: "S/N" },
+		{ key: "offender", label: "OFFENDER NAME" },
+		{ key: "pcn", label: "PCN" },
+		{ key: "offenseType", label: "OFFENSE TYPE" },
+		{ key: "plateNo", label: "PLATE NO." },
+		{ key: "amount", label: "AMOUNT" },
+		{ key: "violationDate", label: "VIOLATION DATE" },
+		{ key: "status", label: "STATUS" },
+	];
+
+	const renderRow = (violation: Violation, index: number) => {
+		const rowBgClass = index % 2 === 1 ? "bg-background" : "";
+		return (
+			<tr key={violation.id} className={cn("transition-colors", rowBgClass)}>
+				<td className="px-4 py-4 text-sm text-muted-foreground">
+					{violation.sn}
+				</td>
+				<td className="px-4 py-4">
+					<span className="text-sm font-medium text-primary">
+						{violation.offender.name}
+					</span>
+				</td>
+				<td className="px-4 py-4">
+					<span className="text-sm text-muted-foreground">{violation.pcn}</span>
+				</td>
+				<td className="px-4 py-4">
+					<span className="text-sm text-primary">{violation.offenseType}</span>
+				</td>
+				<td className="px-4 py-4">
+					<span className="text-sm font-bold">{violation.plateNo}</span>
+				</td>
+				<td className="px-4 py-4">
+					<span className="text-sm font-bold text-primary">
+						₦{formatCurrency(violation.amount)}
+					</span>
+				</td>
+				<td className="px-4 py-4">
+					<div className="flex flex-col">
+						<span className="text-sm text-muted-foreground">
+							{formatDate(violation.violationDate)}
+						</span>
+						<span className="text-xs text-muted-foreground">
+							{formatTime(violation.violationDate)}
+						</span>
+					</div>
+				</td>
+				<td className="px-4 py-4">
+					<Badge
+						variant="outline"
+						className={cn(
+							"text-xs font-medium px-2.5 py-0.5 rounded-full",
+							STATUS_STYLES[violation.status],
+						)}
+					>
+						{STATUS_LABELS[violation.status]}
+					</Badge>
+				</td>
+			</tr>
+		);
+	};
+
 	return (
 		<div className="space-y-6 animate-fade-in">
 			<PageHeader title="Dashboard" />
@@ -165,7 +275,17 @@ export default function DashboardPage() {
 			</div>
 
 			{/* Recent Violations Table */}
-			<ViolationsTable violations={VIOLATIONS_DATA} />
+			<BaseTable<Violation>
+				title="Recent Violations"
+				data={paginatedData}
+				columns={columns}
+				renderRow={renderRow}
+				currentPage={currentPage}
+				totalPages={totalPages}
+				totalItems={totalItems}
+				itemsPerPage={5}
+				onPageChange={setCurrentPage}
+			/>
 
 			{/* Revenue Alert */}
 			<RevenueAlert />
