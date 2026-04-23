@@ -5,7 +5,7 @@ import { API_ENDPOINTS } from "@/constants";
 export const authService = {
   async loginWithCredentials(
     credentials: LoginCredentials
-  ): Promise<{ message: string }> {
+  ): Promise<{ message: string; success: boolean }> {
     const { data } = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials)
     return data;
   },
@@ -27,18 +27,19 @@ export const authService = {
   },
 
   async verifyForgotPasswordOtp(payload: {
-    email: string;
-    otp: string;
+    email: string
+    otp: string
   }): Promise<{
-    message: string;
-    reset_token: string
+    message: string
+    success: boolean
   }> {
     const { data } = await apiClient.post(API_ENDPOINTS.AUTH.VERIFY_FORGOT_PASSWORD, payload)
     return data;
   },
 
   async setForgotPassword(payload: {
-    reset_token: string
+    email: string
+    otp: string
     password: string
     password_confirmation: string
   }): Promise<{ message: string }> {

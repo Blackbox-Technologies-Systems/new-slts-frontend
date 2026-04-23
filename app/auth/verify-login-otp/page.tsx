@@ -66,7 +66,7 @@ function VerifyLoginOtpContent() {
         "w-full py-4 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center gap-2 transition-all"
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md-flex-row">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
             {/* Hero */}
             <div
                 className="w-full md:w-1/2 min-h-100 md:min-h-162.5  bg-cover bg-center bg-no-repeat flex items-center justify-center p-10 md:p-16 text-white"
