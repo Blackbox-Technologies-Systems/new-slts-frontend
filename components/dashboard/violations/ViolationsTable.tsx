@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { Eye, Edit2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -296,6 +296,21 @@ export function ViolationsTable({
 		);
 	};
 
+	// Check if all selected violations belong to the same offender
+	const isSameUser = useMemo(() => {
+		if (selectedRows.size <= 1) return true;
+
+		const selectedViolationsList = violations.filter((v) =>
+			selectedRows.has(v.id),
+		);
+		if (selectedViolationsList.length === 0) return true;
+
+		const firstOffenderId = selectedViolationsList[0].offender.id;
+		return selectedViolationsList.every(
+			(v) => v.offender.id === firstOffenderId,
+		);
+	}, [selectedRows, violations]);
+
 	return (
 		<>
 			<BaseTable<Violation>
@@ -324,6 +339,7 @@ export function ViolationsTable({
 				isOpen={isResendModalOpen}
 				onClose={() => setIsResendModalOpen(false)}
 				selectedCount={selectedRows.size}
+				isSameUser={isSameUser}
 				onSend={(email, phone) => {
 					console.log(
 						`Sending payment links to ${selectedRows.size} violations`,

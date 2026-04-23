@@ -16,6 +16,7 @@ interface ResendPaymentModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	selectedCount: number;
+	isSameUser?: boolean;
 	onSend: (email?: string, phone?: string) => void;
 }
 
@@ -23,6 +24,7 @@ export function ResendPaymentModal({
 	isOpen,
 	onClose,
 	selectedCount,
+	isSameUser = false,
 	onSend,
 }: ResendPaymentModalProps) {
 	const [email, setEmail] = useState("");
@@ -30,13 +32,14 @@ export function ResendPaymentModal({
 	const [isSending, setIsSending] = useState(false);
 
 	const isMultiple = selectedCount > 1;
+	const showInputs = !isMultiple || isSameUser;
 
 	const handleSend = () => {
 		setIsSending(true);
 		// Simulate API call
 		setTimeout(() => {
 			setIsSending(false);
-			onSend(isMultiple ? undefined : email, isMultiple ? undefined : phone);
+			onSend(showInputs ? email : undefined, showInputs ? phone : undefined);
 			onClose();
 		}, 1000);
 	};
@@ -53,7 +56,7 @@ export function ResendPaymentModal({
 				</DialogHeader>
 
 				<div className="grid gap-4 py-4">
-					{!isMultiple ? (
+					{showInputs ? (
 						<>
 							<div className="grid gap-2">
 								<label
@@ -108,7 +111,7 @@ export function ResendPaymentModal({
 					</Button>
 					<Button
 						onClick={handleSend}
-						disabled={isSending || (!isMultiple && (!email || !phone))}
+						disabled={isSending || (showInputs && (!email || !phone))}
 						className="w-full sm:w-auto cursor-pointer"
 					>
 						{isSending ? "Sending..." : "Send"}
