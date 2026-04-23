@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Mail, Lock, Eye, EyeOff, Building, Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { authService } from "@/services/authService"
+import { toast } from "sonner"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -22,7 +23,8 @@ export default function LoginPage() {
     try {
       const res = await authService.loginWithCredentials(form)
 
-      if (res.message === "success") {
+      if (res.success === true || res.message?.toLowerCase().includes("sent")) {
+        toast.success("OTP sent! Redirecting...")
         router.push(
           `/auth/verify-login-otp?email=${encodeURIComponent(form.email)}`
         )
@@ -168,7 +170,11 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button type="submit" disabled={loading} className={`${primaryBtn} mb-6`}>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`${primaryBtn} mb-6`}
+            >
               {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Signing in…</> : "Sign In"}
             </button>
 

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Mail, Loader2, CheckCircle2, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { authService } from "@/services/authService";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
     const router = useRouter()
@@ -21,16 +22,13 @@ export default function ForgotPasswordPage() {
         setLoading(true)
 
         try {
-            const res = await authService.forgotPassword(email.trim())
+            await authService.forgotPassword(email.trim())
 
-            if (res.message === "success") {
-                setSent(true)
-                setTimeout(() => {
-                    router.push(`/auth/verify-forgot-password?email=${encodeURIComponent(email.trim())}`)
-                }, 1500)
-            } else {
-                setError(res.message ?? "Something went wrong. Please try again.")
-            }
+            toast.success("Reset code sent to your email!")
+            setSent(true)
+            setTimeout(() => {
+                router.push(`/auth/verify-forgot-password?email=${encodeURIComponent(email.trim())}`)
+            }, 1500)
         } catch (error: unknown) {
             const e = error as { response?: { data?: { message?: string } } }
             setError(e.response?.data?.message ?? "Network error — please check your connection and try again.")
@@ -42,15 +40,6 @@ export default function ForgotPasswordPage() {
     // Shared style tokens
     const inputBase =
         "w-full py-4 pl-12 pr-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-base text-slate-900 dark:text-white outline-none focus:border-[#010427]/50 focus:ring-2 focus:ring-[#010427]/10 dark:focus:border-slate-500 placeholder:text-slate-400 transition-all duration-200"
-
-    const iconBase =
-        "absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#010427] dark:group-focus-within:text-white transition-colors duration-200"
-
-    const primaryBtn =
-        "w-full py-4 bg-[#010427] dark:bg-slate-800 text-white rounded-2xl text-base font-bold shadow-lg hover:bg-[#02073d] dark:hover:bg-slate-700 hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center justify-center"
-
-    const secondaryBtn =
-        "w-full py-4 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center gap-2 transition-all"
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
