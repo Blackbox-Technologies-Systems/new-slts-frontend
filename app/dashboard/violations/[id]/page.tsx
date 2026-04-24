@@ -108,6 +108,16 @@ const MOCK_VIOLATION: Violation = {
   ],
 }
 
+const REJECTION_REASONS = [
+  "Insufficient evidence",
+  "Bus Insufficient evidence",
+  "Duplicate violation",
+  "Wrong offender identified",
+  "Equipment/camera malfunction",
+  "Violation issued in error",
+  "Other (requires comment)",
+]
+
 // Small shared atoms
 
 function StatusBadge({ status }: { status: ApprovalStatus }) {
@@ -173,8 +183,36 @@ function EvidenceThumbnail({ item, onClick }: { item: Evidence; onClick: () => v
   )
 }
 
-// Main page
+// Modal plumbing 
+function ModalBackdrop({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div
+        className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
 
+function ViolationReference({ v }: { v: Violation }) {
+  return (
+    <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
+      <div>
+        <p className="text-xs text-slate-500 mb-0.5">Violation reference</p>
+        <p className="text-sm font-semibold text-slate-800">
+          {v.pcn} — {v.offender_first_name} {v.offender_last_name} · {v.plate_number}
+        </p>
+      </div>
+      <StatusBadge status={v.approval_status} />
+    </div>
+  )
+}
+
+// Main page
 type ActiveModal = "reject" | "approve" | "edit" | null
 
 export default function ViolationDetailPage({
