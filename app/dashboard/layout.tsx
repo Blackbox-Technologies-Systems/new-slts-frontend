@@ -1,5 +1,7 @@
+import { GlobalFilterModal } from "@/components/dashboard/GlobalFilterModal";
 import { Sidebar } from "@/components/dashboard/layout/Sidebar";
 import { Topbar } from "@/components/dashboard/layout/Topbar";
+import { CreateViolationModal } from "@/components/violations/CreateViolationModal";
 
 export default function DashboardLayout({
 	children,
@@ -13,6 +15,8 @@ export default function DashboardLayout({
 				<Topbar />
 				<main className="flex-1 overflow-y-auto py-6 px-20">{children}</main>
 			</div>
+			<CreateViolationModal /> 
+			<GlobalFilterModal />
 		</div>
 	);
 }
