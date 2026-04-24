@@ -45,6 +45,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar, openModal } = useUI();
   const { user } = useAuth();
+  const { logout, isLoading } = useAuth()
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [profilePopupOpen, setProfilePopupOpen] = useState(false);
@@ -76,7 +77,7 @@ export function Sidebar() {
   }, [profilePopupOpen]);
 
   const navItems = SIDEBAR_NAV_ITEMS.filter((item) => {
-    if (item.requiredRole && user?.role !== item.requiredRole) return false;
+    if (item.requiredRole && user?.roles.includes(item.requiredRole)) return false;
     return true;
   });
 
@@ -110,11 +111,10 @@ export function Sidebar() {
   // ── Logout handler placeholder ──────────────────────────────────────────────
   // Auth/logout functionality is handled separately  wire up here when ready:
   // const { logout } = useAuth();
-  const handleLogout = () => {
-    setProfilePopupOpen(false);
-    // logout();
-    console.log("Logout triggered — wire up auth handler here");
-  };
+  const handleLogout = async () => {
+    setProfilePopupOpen(false)
+    await logout()
+  }
 
   return (
     <aside
@@ -269,7 +269,7 @@ export function Sidebar() {
                 className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
               >
                 <Settings className="h-4 w-4 shrink-0" />
-               Profile Settings
+                Profile Settings
               </Link>
 
               {/* Divider */}
@@ -277,10 +277,11 @@ export function Sidebar() {
 
               <button
                 onClick={handleLogout}
+                disabled={isLoading}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
               >
                 <LogOut className="h-4 w-4 shrink-0" />
-                Log out
+                {isLoading ? "Logging out..." : "Log out"}
               </button>
             </div>
           </div>
@@ -312,7 +313,7 @@ export function Sidebar() {
                 {user?.name ?? "Ahmad Shehu"}
               </p>
               <p className="text-xs text-white/40 truncate capitalize">
-                {user?.role ?? "Administrator"}
+                {user?.roles ?? "Administrator"}
               </p>
             </div>
           )}
