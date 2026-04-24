@@ -265,7 +265,7 @@ function RejectModal({ v, onClose }: { v: Violation; onClose: () => void }) {
                 className={`w-4 h-4 text-slate-400 transition-transform ${open
                   ? "rotate-180"
                   : ""}`
-                } 
+                }
               />
             </button>
             {open && (
@@ -455,29 +455,50 @@ function EditModal({ v, onClose }: { v: Violation; onClose: () => void }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Fine Amount <span className="text-red-500">*</span></label>
-              <input type="text" value={form.fine_amount} onChange={update("fine_amount")} className={inp} />
+              <input
+                type="text"
+                value={form.fine_amount}
+                onChange={update("fine_amount")}
+                className={inp} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Assigned Marshal</label>
               {/* TODO: replace with searchable marshal dropdown */}
-              <input type="text" value={form.marshal} onChange={update("marshal")} className={inp} />
+              <input
+                type="text"
+                value={form.marshal}
+                onChange={update("marshal")}
+                className={inp} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Violation date <span className="text-red-500">*</span></label>
-              <input type="text" value={form.violation_date} onChange={update("violation_date")} className={inp} />
+              <input
+                type="text"
+                value={form.violation_date}
+                onChange={update("violation_date")}
+                className={inp} />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Violation time</label>
-              <input type="text" value={form.violation_time} onChange={update("violation_time")} className={inp} />
+              <input
+                type="text"
+                value={form.violation_time}
+                onChange={update("violation_time")}
+                className={inp} />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1.5">Location</label>
-            <input type="text" value={form.location} onChange={update("location")} placeholder="Enter location" className={inp} />
+            <input
+              type="text"
+              value={form.location}
+              onChange={update("location")}
+              placeholder="Enter location"
+              className={inp} />
           </div>
 
           <div>
