@@ -108,6 +108,36 @@ const MOCK_VIOLATION: Violation = {
   ],
 }
 
+// Small shared atoms
+
+function StatusBadge({ status }: { status: ApprovalStatus }) {
+  const s: Record<ApprovalStatus, string> = {
+    Approved: "text-green-600 bg-green-50 border-green-400",
+    Rejected: "text-red-500  bg-red-50   border-red-400",
+    Submitted: "text-gray-600 bg-gray-50  border-gray-400",
+  }
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${s[status]}`}>
+      {status}
+    </span>
+  )
+}
+
+function PaymentBadge({ status }: { status: PaymentStatus }) {
+  const s: Record<PaymentStatus, string> = {
+    Paid: "text-green-600  bg-green-50   border-green-400",
+    Unpaid: "text-red-500   bg-red-50    border-red-400",
+    Pending: "text-yellow-600 bg-yellow-50  border-yellow-400",
+    Overdue: "text-orange-600 bg-orange-50  border-orange-400",
+  }
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${s[status]}`}>
+      {status}
+    </span>
+  )
+}
+
+
 // Main page
 
 type ActiveModal = "reject" | "approve" | "edit" | null
@@ -184,7 +214,24 @@ export default function ViolationDetailPage({
         </div>
       </div>
 
-      
+      {/* 5-column stat strip */}
+      <div className="flex flex-wrap gap-10 mb-8">
+        {[
+          { label: "Offender", value: `${v.offender_first_name} ${v.offender_last_name}`, badge: false },
+          { label: "PCN NO", value: v.pcn, badge: false },
+          { label: "Plate Number", value: v.plate_number, badge: false },
+          { label: "Date", value: v.violation_date, badge: false },
+        ].map(({ label, value }) => (
+          <div key={label}>
+            <p className="text-lg font-bold text-slate-900">{value}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+          </div>
+        ))}
+        <div>
+          <StatusBadge status={v.approval_status} />
+          <p className="text-xs text-slate-400 mt-1.5">Status</p>
+        </div>
+      </div>
     </div>
   )
 }
