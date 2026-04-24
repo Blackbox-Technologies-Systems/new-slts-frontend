@@ -137,6 +137,27 @@ function PaymentBadge({ status }: { status: PaymentStatus }) {
   )
 }
 
+// A labelled row inside an info card
+function CardRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="py-3 border-b border-slate-100 last:border-0">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
+        {label}
+      </p>
+      <div className="text-sm font-medium text-slate-800">{children}</div>
+    </div>
+  )
+}
+
+// Info cards wrapper
+function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex-1 min-w-0">
+      <h3 className="text-sm font-bold text-slate-900 mb-1">{title}</h3>
+      {children}
+    </div>
+  )
+}
 
 // Main page
 
@@ -231,6 +252,39 @@ export default function ViolationDetailPage({
           <StatusBadge status={v.approval_status} />
           <p className="text-xs text-slate-400 mt-1.5">Status</p>
         </div>
+      </div>
+
+      {/* Info cards */}
+      <div className="flex flex-1 flex-col lg:flex-row gap-4 mb-6">
+        {/* Offence Info */}
+        <InfoCard title="Offence Info">
+          <CardRow label="Offence">{v.offence}</CardRow>
+          <CardRow label="Fine">₦{Number(v.fine.replace(/[^0-9]/g, "")).toLocaleString()}.00</CardRow>
+          <CardRow label="Event Type">{v.event_type}</CardRow>
+          <CardRow label="Command">{v.command}</CardRow>
+          <CardRow label="Zone">{v.zone}</CardRow>
+          <CardRow label="Violation Date">{v.violation_datetime}</CardRow>
+        </InfoCard>
+
+        {/* Vehicle Info */}
+        <InfoCard title="Vehicle Info">
+          <CardRow label="Brand">{v.brand}</CardRow>
+          <CardRow label="Type">{v.vehicle_type}</CardRow>
+          <CardRow label="Vehicle Color">{v.vehicle_color}</CardRow>
+          <CardRow label="Plate Number">{v.plate_number}</CardRow>
+          <CardRow label="Plate Type">{v.plate_type}</CardRow>
+          <CardRow label="Plate Color">{v.plate_color}</CardRow>
+        </InfoCard>
+
+        {/* Offender Info */}
+        <InfoCard title="Offender Info">
+          <CardRow label="Full Name">{v.offender_first_name} {v.offender_last_name}</CardRow>
+          <CardRow label="Phone Number">{v.phone_number}</CardRow>
+          <CardRow label="Email Address">{v.email_address}</CardRow>
+          <CardRow label="Violation Status">{v.violation_status}</CardRow>
+          <CardRow label="Payment Status"><PaymentBadge status={v.payment_status} /></CardRow>
+        </InfoCard>
+
       </div>
     </div>
   )
