@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = await signToken({ userId: user.id, role: user.role });
+    const token = await signToken({ userId: user.id, role: user.roles });
     const safeUser = sanitizeUser(user);
 
     return NextResponse.json(
