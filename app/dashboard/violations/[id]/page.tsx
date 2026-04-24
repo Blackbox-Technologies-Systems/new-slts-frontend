@@ -308,6 +308,84 @@ function RejectModal({ v, onClose }: { v: Violation; onClose: () => void }) {
   )
 }
 
+// Approve modal
+const APPROVE_CHECKLIST = [
+  "Evidence reviewed and valid",
+  "Plate number confirmed",
+  "Vehicle not on whitelist",
+  "No active dispute on this violation",
+]
+
+function ApproveModal({ v, onClose }: { v: Violation; onClose: () => void }) {
+  const [notes, setNotes] = useState("")
+
+  const handleConfirm = () => {
+    // TODO: PATCH /violations/:id/approve  → { notes }
+    console.log("Approve:", { notes })
+    onClose()
+  }
+
+  return (
+    <ModalBackdrop onClose={onClose}>
+      <div className="p-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Approve violation</h2>
+            <p className="text-sm text-slate-500">This will mark the violation as approved and notify the offender</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1"><X className="w-5 h-5" /></button>
+        </div>
+
+        <ViolationReference v={v} />
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {[
+            { label: "Offense type", value: v.offence, highlight: false },
+            { label: "Violation date", value: v.violation_date, highlight: false },
+            { label: "Capturing marshal", value: "James Danladi", highlight: false },
+            { label: "Fine amount", value: v.fine, highlight: true },
+          ].map(({ label, value, highlight }) => (
+            <div key={label} className={`p-3 rounded-xl ${highlight ? "bg-emerald-50 border border-emerald-200" : "bg-slate-50"}`}>
+              <p className="text-xs text-slate-500 mb-0.5">{label}</p>
+              <p className={`text-sm font-semibold ${highlight ? "text-emerald-700" : "text-slate-800"}`}>{value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 space-y-2">
+          {APPROVE_CHECKLIST.map(item => (
+            <div key={item} className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full border-2 border-emerald-500 flex items-center justify-center shrink-0">
+                <Check className="w-3 h-3 text-emerald-500" />
+              </div>
+              <span className="text-sm text-slate-700">{item}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex gap-2">
+          <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+          <p className="text-sm text-emerald-700">
+            Once approved, the offender will be notified and the fine of <strong>{v.fine}</strong> becomes due for payment. This action is logged and cannot be undone without a new review.
+          </p>
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-sm font-semibold text-slate-700 mb-1.5">Additional notes (optional)</label>
+          <textarea value={notes} onChange={e => setNotes(e.target.value)} maxLength={500} rows={3} placeholder="e.g Acura"
+            className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:border-slate-400 placeholder:text-slate-400" />
+          <p className="text-xs text-slate-400 text-right mt-1">{notes.length}/500 characters</p>
+        </div>
+
+        <div className="flex gap-3 mt-6 justify-end">
+          <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">Cancel</button>
+          <button type="button" onClick={handleConfirm} className="px-5 py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors">Confirm Approval</button>
+        </div>
+      </div>
+    </ModalBackdrop>
+  )
+}
+
 // Main page
 type ActiveModal = "reject" | "approve" | "edit" | null
 
@@ -473,6 +551,7 @@ export default function ViolationDetailPage({
 
       {/* Modals */}
       {activeModal === "reject" && <RejectModal v={v} onClose={() => setActiveModal(null)} />}
+      {activeModal === "approve" && <ApproveModal v={v} onClose={() => setActiveModal(null)} />}
     </div>
   )
 }
