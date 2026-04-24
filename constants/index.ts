@@ -16,13 +16,21 @@ export const ROUTES = {
   REPORTS: "/dashboard/reports",
   PROFILE: "/dashboard/profile",
   SETTINGS: "/dashboard/settings",
+  ASSET_MANAGEMENT: "/dashboard/asset-management",
+  REPORTS_OVERVIEW: "/dashboard/reports/overview",
+} as const;
+
+export const MODAL_KEYS = {
+  CREATE_VIOLATION: "create-violation",
+  GLOBAL_FILTER: "global-filter"
 } as const;
 
 export const PROTECTED_ROUTES = ["/dashboard"];
-
 export const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://slts-cpy-staging.up.railway.app/api";
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -36,6 +44,20 @@ export const API_ENDPOINTS = {
     PROFILE: "/user/profile",
     UPDATE: "/user/update",
     DELETE: "/user/delete",
+  },
+  VIOLATIONS: {
+    LIST: "/violations",
+    CREATE: "/violations",          // POST — not live yet
+    DETAIL: (id: string) => `/violations/${id}`,
+    DISPUTES: "/violations/disputes",
+    SUMMARY: "/violations/summary",
+  },
+  PLATE: {
+    RUN: "/plate/run",
+  },
+  OFFENDERS: {
+    LIST: "/offenders",
+    DETAIL: (id: string) => `/offenders/${id}`,
   },
 } as const;
 
@@ -53,9 +75,11 @@ export const COOKIE_OPTIONS = {
 
 export const PERSIST_KEY = "slts-root";
 
+// ─── Sidebar Types ─────────────────────────────────────────────────────────────
+
 interface SidebarChildItem {
   title: string;
-  href: string;
+  href: string;        // a ROUTE path, OR a MODAL_KEY if isModal is true
   isModal?: boolean;
 }
 
@@ -65,18 +89,21 @@ interface SidebarNavItem {
   icon: string;
   badge?: string;
   requiredRole?: string;
+  isModal?: boolean;
   children?: SidebarChildItem[];
 }
+
+// ─── Sidebar Nav ───────────────────────────────────────────────────────────────
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: ROUTES.DASHBOARD,
     icon: "LayoutDashboard",
   },
   {
     title: "Violation",
-    href: "/dashboard/violations",
+    href: ROUTES.VIOLATIONS,
     icon: "AlertTriangle",
     children: [
       { title: "View Violations", href: "/dashboard/violations", isModal: false },
@@ -86,36 +113,47 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   },
   {
     title: "Run Plate Number",
-    href: "/dashboard/plate",
+    href: ROUTES.PLATE,
     icon: "Search",
   },
   {
     title: "Offenders",
-    href: "/dashboard/offenders",
+    href: ROUTES.OFFENDERS,
     icon: "Users",
   },
   {
     title: "User Manager",
-    href: "/dashboard/users",
+    href: ROUTES.USERS,
     icon: "UserCog",
     requiredRole: "admin",
     children: [
-      { title: "All Users", href: "/dashboard/users", isModal: false },
-      { title: "Roles", href: "/dashboard/users/roles", isModal: false },
+      { title: "All Users", href: ROUTES.USERS, isModal: false },
+      { title: "Roles", href: `${ROUTES.USERS}/roles`, isModal: false },
     ],
   },
   {
+    title: "Asset Management",
+    href: ROUTES.ASSET_MANAGEMENT,        // ← add this route too
+    icon: "Camera",
+  },
+  {
     title: "Report",
-    href: "/dashboard/reports",
+    href: ROUTES.REPORTS,
     icon: "BarChart2",
+    children: [
+      { title: "Overview", href: `${ROUTES.REPORTS}/overview`, isModal: false },
+      { title: "Violation report", href: `${ROUTES.REPORTS}/violations`, isModal: false },
+      { title: "Revenue report", href: `${ROUTES.REPORTS}/revenue`, isModal: false },
+      { title: "Offender report", href: `${ROUTES.REPORTS}/offenders`, isModal: false },
+      { title: "Marshal report", href: `${ROUTES.REPORTS}/marshal`, isModal: false },
+      { title: "Zone report", href: `${ROUTES.REPORTS}/zone`, isModal: false },
+      { title: "Dispute report", href: `${ROUTES.REPORTS}/disputes`, isModal: false },
+      { title: "My report", href: `${ROUTES.REPORTS}/my-report`, isModal: false },
+    ],
   },
 ];
-
 export const THEMES = ["light", "dark", "system"] as const;
-
 export const TOAST_DURATION = 4000;
-
 export const PAGINATION_PAGE_SIZE = 10;
-
 export const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production-please";
 export const JWT_EXPIRY = "7d";

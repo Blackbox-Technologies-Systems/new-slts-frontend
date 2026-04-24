@@ -155,3 +155,49 @@ export interface Notification {
   read: boolean;
   createdAt: string;
 }
+
+export interface ViolationFormData {
+  // Vehicle Info
+  plateNumber: string;
+  plateType: string;
+  plateColor: string;
+  vehicleBrand: string;
+  vehicleType: string;
+  vehicleColor: string;
+  // Offence
+  offence: string;
+  eventType: string;
+  violationDate: string;
+  zone: string;
+  command: string;
+  offenderFirstName: string;
+  offenderSurname: string;
+  phoneNumber: string;
+  emailAddress: string;
+  // Files
+  files: File[];
+}
+
+export interface SelectFieldProps {
+  label: string;
+  placeholder: string;
+  required?: boolean;
+  options?: string[];
+  value: string;
+  onChange: (v: string) => void;
+  className?: string;
+}
+
+export interface SectionHeaderProps {
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  noBorder?: boolean;
+}
+
+export interface UploadFile {
+  file: File;
+  progress: number; // 0–100
+}
+
+
