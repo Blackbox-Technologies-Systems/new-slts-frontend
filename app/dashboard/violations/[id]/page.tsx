@@ -313,6 +313,29 @@ export default function ViolationDetailPage({
           ))}
         </div>
       </div>
+
+      {/* Action History */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+        <h2 className="text-base font-bold text-slate-900 mb-5">Action history</h2>
+        {v.action_history.map((item, i) => (
+          <div key={i} className="flex gap-4 pb-6 last:pb-0">
+            <div className="flex flex-col items-center">
+              <div className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0 mt-1" />
+              {i < v.action_history.length - 1 && (
+                <div className="w-px flex-1 bg-slate-200 mt-1" />
+              )}
+            </div>
+
+            <div className="flex-1 flex items-start justify-between">
+              <div>
+                <p className="text-sm font-semibold text-slate-800">{item.event}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{item.actor}</p>
+              </div>
+              <span className="text-xs text-slate-400 shrink-0 ml-4 whitespace-nowrap">{item.timestamp}</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
