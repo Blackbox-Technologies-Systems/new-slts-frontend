@@ -528,6 +528,39 @@ function EditModal({ v, onClose }: { v: Violation; onClose: () => void }) {
   )
 }
 
+// Evidence lightbox
+function EvidenceLightbox({ item, onClose }: { item: Evidence; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      <div
+        className="max-w-4xl mx-4"
+        onClick={e => e.stopPropagation()
+        }
+      >
+        {/* TODO: replace with <img src={item.url} /> or <video src={item.url} controls /> */}
+        <div className="w-160 h-120 bg-slate-800 rounded-xl flex flex-col items-center justify-center gap-3">
+          {item.type === "image"
+            ? <Camera className="w-16 h-16 text-slate-600" />
+            : <Video className="w-16 h-16 text-slate-600" />
+          }
+          <span className="text-slate-500 text-sm">Connect backend to display evidence</span>
+        </div>
+        <p className="text-center text-white/60 text-sm mt-3">{item.filename}</p>
+      </div>
+    </div>
+  )
+}
+
 // Main page
 type ActiveModal = "reject" | "approve" | "edit" | null
 
@@ -695,6 +728,7 @@ export default function ViolationDetailPage({
       {activeModal === "reject" && <RejectModal v={v} onClose={() => setActiveModal(null)} />}
       {activeModal === "approve" && <ApproveModal v={v} onClose={() => setActiveModal(null)} />}
       {activeModal === "edit" && <EditModal v={v} onClose={() => setActiveModal(null)} />}
+      {evidenceItem && <EvidenceLightbox item={evidenceItem} onClose={() => setEvidenceItem(null)} />}
     </div>
   )
 }
