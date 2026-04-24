@@ -159,6 +159,20 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
   )
 }
 
+function EvidenceThumbnail({ item, onClick }: { item: Evidence; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} className="flex flex-col items-center gap-1.5 group">
+      <div className="w-16 h-16 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center group-hover:border-slate-400 group-hover:bg-slate-200 transition-all">
+        {item.type === "image"
+          ? <Camera className="w-6 h-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
+          : <Video className="w-6 h-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
+        }
+      </div>
+      <span className="text-xs text-slate-500">{item.filename}</span>
+    </button>
+  )
+}
+
 // Main page
 
 type ActiveModal = "reject" | "approve" | "edit" | null
@@ -284,7 +298,20 @@ export default function ViolationDetailPage({
           <CardRow label="Violation Status">{v.violation_status}</CardRow>
           <CardRow label="Payment Status"><PaymentBadge status={v.payment_status} /></CardRow>
         </InfoCard>
+      </div>
 
+      {/* Evidence */}
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+        <h2 className="text-base font-bold text-slate-900 mb-4">Evidence</h2>
+        <div className="flex flex-wrap gap-4">
+          {v.evidence.map(item => (
+            <EvidenceThumbnail
+              key={item.id}
+              item={item}
+              onClick={() => setEvidenceItem(item)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
