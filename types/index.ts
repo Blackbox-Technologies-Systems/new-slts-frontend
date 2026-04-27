@@ -4,13 +4,16 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  roles: string[];
+  permissions: string[];
+  last_login_at: string;
+  status: string;
   avatar?: string;
-  createdAt: string;
-  isVerified: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-export type UserRole = "admin" | "user" | "moderator";
+// export type UserRole = "admin" | "user" | "moderator";
 
 // ─── Auth Types ────────────────────────────────────────────────────────────────
 
@@ -54,7 +57,7 @@ export interface NavItem {
   icon?: string;
   badge?: string | number;
   children?: NavItem[];
-  requiredRole?: UserRole;
+  requiredRole?: User;
 }
 
 // ─── Dashboard Types ───────────────────────────────────────────────────────────
@@ -199,5 +202,3 @@ export interface UploadFile {
   file: File;
   progress: number; // 0–100
 }
-
-

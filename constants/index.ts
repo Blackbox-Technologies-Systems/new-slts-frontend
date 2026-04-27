@@ -28,13 +28,16 @@ export const MODAL_KEYS = {
 export const PROTECTED_ROUTES = ["/dashboard"];
 export const AUTH_ROUTES = ["/auth/login", "/auth/register"];
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://slts-cpy-staging.up.railway.app/api";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+// export const API_BASE_URL = "/api/proxy"
 
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: "/auth/login",
+    FORGOT_PASSWORD: "/auth/forgot-password",
+    VERIFY_OTP: "/auth/verify-login-otp",
+    VERIFY_FORGOT_PASSWORD: "/auth/verify-forgot-password",
+    SET_FORGOT_PASSWORD: "/auth/set-forgot-password",
     REGISTER: "/auth/register",
     LOGOUT: "/auth/logout",
     REFRESH: "/auth/refresh",
