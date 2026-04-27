@@ -109,21 +109,9 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     href: ROUTES.VIOLATIONS,
     icon: "AlertTriangle",
     children: [
-      {
-        title: "View Violations",
-        href: MODAL_KEYS.CREATE_VIOLATION,
-        isModal: true,
-      },
-      {
-        title: "Disputes",
-        href: ROUTES.VIOLATIONS_DISPUTES,
-        isModal: false,
-      },
-      {
-        title: "Summary",
-        href: ROUTES.VIOLATIONS_SUMMARY,
-        isModal: false,
-      },
+      { title: "View Violations", href: "/dashboard/violations", isModal: false },
+      { title: "Disputes", href: "/dashboard/violations/disputes", isModal: true },
+      { title: "Summary", href: "/dashboard/violations/summary", isModal: true },
     ],
   },
   {
@@ -156,14 +144,14 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
     href: ROUTES.REPORTS,
     icon: "BarChart2",
     children: [
-      { title: "Overview",         href: `${ROUTES.REPORTS}/overview`,         isModal: false },
-      { title: "Violation report", href: `${ROUTES.REPORTS}/violations`,       isModal: false },
-      { title: "Revenue report",   href: `${ROUTES.REPORTS}/revenue`,          isModal: false },
-      { title: "Offender report",  href: `${ROUTES.REPORTS}/offenders`,        isModal: false },
-      { title: "Marshal report",   href: `${ROUTES.REPORTS}/marshal`,          isModal: false },
-      { title: "Zone report",      href: `${ROUTES.REPORTS}/zone`,             isModal: false },
-      { title: "Dispute report",   href: `${ROUTES.REPORTS}/disputes`,         isModal: false },
-      { title: "My report",        href: `${ROUTES.REPORTS}/my-report`,        isModal: false },
+      { title: "Overview", href: `${ROUTES.REPORTS}/overview`, isModal: false },
+      { title: "Violation report", href: `${ROUTES.REPORTS}/violations`, isModal: false },
+      { title: "Revenue report", href: `${ROUTES.REPORTS}/revenue`, isModal: false },
+      { title: "Offender report", href: `${ROUTES.REPORTS}/offenders`, isModal: false },
+      { title: "Marshal report", href: `${ROUTES.REPORTS}/marshal`, isModal: false },
+      { title: "Zone report", href: `${ROUTES.REPORTS}/zone`, isModal: false },
+      { title: "Dispute report", href: `${ROUTES.REPORTS}/disputes`, isModal: false },
+      { title: "My report", href: `${ROUTES.REPORTS}/my-report`, isModal: false },
     ],
   },
 ];
