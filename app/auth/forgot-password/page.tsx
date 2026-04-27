@@ -1,85 +1,58 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Mail, Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
+import React, { useState } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { Mail, Loader2, CheckCircle2, ArrowLeft } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { authService } from "@/services/authService";
 import { toast } from "sonner";
-import axios from "axios";
-
-const SERVER = process.env.NEXT_PUBLIC_API_URL ?? "";
-
-/** Naive browser-side email check — real validation is on the server. */
-const isValidEmail = (value: string) =>
-    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value);
-
-/** Cryptographically random token — replaces the old `generate_token(50)` helper. */
-function generateToken(length = 50): string {
-    const chars =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-    return Array.from(array, (byte) => chars[byte % chars.length]).join("");
-}
 
 export default function ForgotPasswordPage() {
-    const [email, setEmail] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    const router = useRouter()
 
-    const validate = () => {
-        if (!email.trim()) {
-            setEmailError("Please enter your email address.");
-            return false;
-        }
-        if (!isValidEmail(email)) {
-            setEmailError("Please enter a valid email address.");
-            return false;
-        }
-        setEmailError("");
-        return true;
-    };
+    const [email, setEmail] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [sent, setSent] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!validate()) return;
-
-        setLoading(true);
+        e.preventDefault()
+        setError(null)
+        setLoading(true)
 
         try {
-            const { data } = await axios.patch(
-                `${SERVER}/login/forget_password/add_token`,
-                {
-                    email_address: email.trim(),
-                    token: generateToken(50),
-                }
-            );
+            await authService.forgotPassword(email.trim())
 
-            if (data.message === "success") {
-                setSubmitted(true);
-            } else {
-                toast.error(data.message ?? "Something went wrong. Please try again.");
-            }
-        } catch {
-            toast.error("Network error — please check your connection and try again.");
+            toast.success("Reset code sent to your email!")
+            setSent(true)
+            setTimeout(() => {
+                router.push(`/auth/verify-forgot-password?email=${encodeURIComponent(email.trim())}`)
+            }, 1500)
+        } catch (error: unknown) {
+            const e = error as { response?: { data?: { message?: string } } }
+            setError(e.response?.data?.message ?? "Network error — please check your connection and try again.")
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
+
+    // Shared style tokens
+    const inputBase =
+        "w-full py-4 pl-12 pr-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-base text-slate-900 dark:text-white outline-none focus:border-[#010427]/50 focus:ring-2 focus:ring-[#010427]/10 dark:focus:border-slate-500 placeholder:text-slate-400 transition-all duration-200"
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
 
             {/* ── Hero ── */}
             <div
-                className="w-full md:w-1/2 min-h-[300px] md:min-h-[650px] bg-cover bg-center bg-no-repeat flex items-center justify-center p-10 md:p-16 text-white"
+                className="w-full md:w-1/2 min-h-75 md:min-h-162.5 bg-cover bg-center bg-no-repeat flex items-center justify-center p-10 md:p-16 text-white"
                 style={{
                     backgroundImage:
                         "linear-gradient(rgba(1,4,39,0.72), rgba(1,4,39,0.72)), url('/images/login/bg1.webp')",
                 }}
             >
-                <div className="text-center max-w-sm">
+                <div className="flex flex-col items-center text-center">
                     <div className="flex justify-center mb-5">
                         <Image
                             src="/images/login/slts-white2.png"
@@ -100,21 +73,24 @@ export default function ForgotPasswordPage() {
             </div>
 
             {/* ── Form ── */}
-            <div className="w-full md:w-1/2 min-h-[650px] flex items-center justify-center p-8 md:p-12">
+            <div className="w-full md:w-1/2 min-h-162.5 flex items-center justify-center p-8 md:p-12">
                 <div className="w-full max-w-md">
 
-                    {!submitted ? (
+                    {!sent ? (
                         <>
                             <div className="mb-8 text-center md:text-left">
-                                <h2 className="text-3xl md:text-4xl font-bold text-[#02073d] dark:text-white mb-1">
+                                <h2 className="text-2xl md:text-4xl font-bold text-[#02073d] dark:text-white mb-1">
                                     Forgot Password?
                                 </h2>
                                 <p className="text-slate-500 dark:text-slate-400">
-                                    No worries — we&apos;ll send you reset instructions.
+                                    No worries — we'll send you reset instructions.
                                 </p>
                             </div>
 
                             <form onSubmit={handleSubmit} noValidate>
+                                {error && (
+                                    <div className="mb-5 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 px-4 py-3 text-sm text-red-600 dark:text-red-400">{error}</div>
+                                )}
                                 {/* Email */}
                                 <div className="mb-6">
                                     <label
@@ -135,18 +111,13 @@ export default function ForgotPasswordPage() {
                                             value={email}
                                             onChange={(e) => {
                                                 setEmail(e.target.value);
-                                                if (emailError) setEmailError("");
+                                                if (error) setError("");
                                             }}
-                                            className={`w-full py-4 pl-12 pr-4 bg-slate-50 dark:bg-slate-800 border rounded-2xl text-base text-slate-900 dark:text-white outline-none focus:ring-2 placeholder:text-slate-400 transition-all duration-200 ${emailError
-                                                    ? "border-red-400 focus:border-red-400 focus:ring-red-200 dark:focus:ring-red-900/30"
-                                                    : "border-slate-200 dark:border-slate-700 focus:border-[#010427]/50 focus:ring-[#010427]/10"
-                                                }`}
+                                            className={inputBase}
                                             placeholder="admin@slts.com.ng"
                                         />
                                     </div>
-                                    {emailError && (
-                                        <p className="mt-1.5 ml-1 text-sm text-red-500">{emailError}</p>
-                                    )}
+
                                 </div>
 
                                 {/* Submit */}
@@ -161,13 +132,13 @@ export default function ForgotPasswordPage() {
                                             Sending…
                                         </>
                                     ) : (
-                                        "Send Reset Instructions"
+                                        "Send Reset Code"
                                     )}
                                 </button>
 
                                 {/* Back */}
                                 <Link
-                                    href="/login"
+                                    href="/auth/login"
                                     className="w-full py-4 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center gap-2 transition-all"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
@@ -184,7 +155,7 @@ export default function ForgotPasswordPage() {
                                 </div>
                             </div>
                             <h2 className="text-2xl font-bold text-[#02073d] dark:text-white mb-3">
-                                Check your inbox
+                                Code Sent!
                             </h2>
                             <p className="text-slate-500 dark:text-slate-400 mb-2">
                                 We sent a password reset link to
@@ -193,9 +164,9 @@ export default function ForgotPasswordPage() {
                                 {email}
                             </p>
                             <p className="text-sm text-slate-400 mb-6">
-                                Didn&apos;t receive it? Check your spam folder, or{" "}
+                                Didn't receive it? Check your spam folder, or{" "}
                                 <button
-                                    onClick={() => setSubmitted(false)}
+                                    onClick={() => setSent(false)}
                                     className="text-[#010427] dark:text-blue-400 font-semibold hover:underline"
                                 >
                                     try another email
