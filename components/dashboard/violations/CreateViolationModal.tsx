@@ -2,17 +2,26 @@
 
 import { useState, useRef } from "react";
 import {
-  X, ChevronDown, Calendar, Upload,
-  Loader2, ChevronUp, Trash2, FileText,
+  ChevronDown, Calendar, Upload,
+  Loader2, ChevronUp, Trash2, FileText, X,
 } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader,
+  DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useUI } from "@/hooks";
-import { ViolationFormData, SectionHeaderProps, SelectFieldProps, UploadFile } from "@/types/index";
+import { MODAL_KEYS } from "@/constants";
+import { ViolationFormData, SectionHeaderProps, SelectFieldProps } from "@/types/index";
 
 // ─── Upload File Type ─────────────────────────────────────────────────────────
 
+interface UploadFile {
+  file: File;
+  progress: number;
+}
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
@@ -22,40 +31,23 @@ function formatBytes(bytes: number): string {
 
 // ─── File Row ─────────────────────────────────────────────────────────────────
 
-function FileRow({
-  uploadFile,
-  onRemove,
-}: {
-  uploadFile: UploadFile;
-  onRemove: () => void;
-}) {
+function FileRow({ uploadFile, onRemove }: { uploadFile: UploadFile; onRemove: () => void }) {
   const { file, progress } = uploadFile;
   const isDone = progress >= 100;
 
   return (
     <div className="mt-4">
-      {/* File info row */}
       <div className="flex items-center gap-3">
-        {/* PDF icon badge */}
         <div className="h-9 w-9 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
           <FileText className="h-5 w-5 text-red-500" />
         </div>
-
-        {/* Name + size */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground truncate">
             {file.name.replace(/\.[^/.]+$/, "")}
           </p>
           <p className="text-xs text-muted-foreground">{formatBytes(file.size)}</p>
         </div>
-
-        {/* Remove — red circle X while uploading, trash when done */}
-        <button
-          type="button"
-          onClick={onRemove}
-          className="shrink-0"
-          aria-label="Remove file"
-        >
+        <button type="button" onClick={onRemove} className="shrink-0" aria-label="Remove file">
           {isDone ? (
             <Trash2 className="h-5 w-5 text-red-500 hover:text-red-600 transition-colors" />
           ) : (
@@ -65,8 +57,6 @@ function FileRow({
           )}
         </button>
       </div>
-
-      {/* Progress bar — thin hairline, full width, only while uploading */}
       {!isDone && (
         <div className="mt-3 flex items-center gap-2">
           <span className="text-muted-foreground text-sm leading-none select-none">|</span>
@@ -85,19 +75,10 @@ function FileRow({
   );
 }
 
-// ─── Reusable Select ──────────────────────────────────────────────────────────
+// ─── Select Field ─────────────────────────────────────────────────────────────
 
-function SelectField({
-  label,
-  placeholder,
-  required,
-  options = [],
-  value,
-  onChange,
-  className,
-}: SelectFieldProps) {
+function SelectField({ label, placeholder, required, options = [], value, onChange, className }: SelectFieldProps) {
   const [open, setOpen] = useState(false);
-
   return (
     <div className={cn("flex flex-col gap-1.5", className)}>
       <label className="text-xs text-muted-foreground">
@@ -114,14 +95,8 @@ function SelectField({
           )}
         >
           <span>{value || placeholder}</span>
-          <ChevronDown
-            className={cn(
-              "h-4 w-4 text-muted-foreground transition-transform shrink-0",
-              open && "rotate-180"
-            )}
-          />
+          <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform shrink-0", open && "rotate-180")} />
         </button>
-
         {open && options.length > 0 && (
           <div className="absolute z-[60] mt-1 w-full rounded-lg border border-border bg-card shadow-lg overflow-hidden">
             {options.map((opt) => (
@@ -165,50 +140,31 @@ function SectionHeader({ title, isOpen, onToggle, noBorder }: SectionHeaderProps
 
 export function CreateViolationModal() {
   const { activeModal, closeModal } = useUI();
-  const isOpen = activeModal === "create-violation";
+  const isOpen = activeModal === MODAL_KEYS.CREATE_VIOLATION;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [vehicleOpen, setVehicleOpen] = useState(true);
   const [offenceOpen, setOffenceOpen] = useState(true);
   const [filesOpen, setFilesOpen] = useState(true);
-
+  const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Separate state for upload files (with progress) from form data
-  const [uploadFiles, setUploadFiles] = useState<UploadFile[]>([]);
-
   const [form, setForm] = useState<ViolationFormData>({
-    plateNumber: "",
-    plateType: "",
-    plateColor: "",
-    vehicleBrand: "",
-    vehicleType: "",
-    vehicleColor: "",
-    offence: "",
-    eventType: "",
-    violationDate: "",
-    zone: "",
-    command: "",
-    offenderFirstName: "",
-    offenderSurname: "",
-    phoneNumber: "",
-    emailAddress: "",
-    files: [],
+    plateNumber: "", plateType: "", plateColor: "", vehicleBrand: "",
+    vehicleType: "", vehicleColor: "", offence: "", eventType: "",
+    violationDate: "", zone: "", command: "", offenderFirstName: "",
+    offenderSurname: "", phoneNumber: "", emailAddress: "", files: [],
   });
 
   const set = (key: keyof ViolationFormData) => (value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  // Simulate upload progress per file
   const simulateProgress = (index: number) => {
     const interval = setInterval(() => {
       setUploadFiles((prev) => {
         const updated = [...prev];
         if (!updated[index]) { clearInterval(interval); return prev; }
-        const next = Math.min(
-          updated[index].progress + Math.floor(Math.random() * 15 + 5),
-          100
-        );
+        const next = Math.min(updated[index].progress + Math.floor(Math.random() * 15 + 5), 100);
         updated[index] = { ...updated[index], progress: next };
         if (next >= 100) clearInterval(interval);
         return updated;
@@ -225,7 +181,6 @@ export function CreateViolationModal() {
       return [...prev, ...newEntries];
     });
     setForm((prev) => ({ ...prev, files: [...prev.files, ...selected] }));
-    // reset so same file can be re-added
     e.target.value = "";
   };
 
@@ -238,13 +193,13 @@ export function CreateViolationModal() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // NOTE: Replace with real API call once endpoint is live:
+      // TODO: replace with real API call once endpoint is live
       // const formData = new FormData();
       // Object.entries(form).forEach(([k, v]) => {
       //   if (k === "files") (v as File[]).forEach((f) => formData.append("files", f));
       //   else formData.append(k, v as string);
       // });
-      // await apiClient.post("/violations", formData);
+      // await apiClient.post(API_ENDPOINTS.VIOLATIONS.CREATE, formData);
       await new Promise((res) => setTimeout(res, 1200));
       closeModal();
     } catch (err) {
@@ -254,28 +209,18 @@ export function CreateViolationModal() {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/40"
-        onClick={closeModal}
-        aria-hidden="true"
-      />
-
-      {/* Panel */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="create-violation-title"
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && closeModal()}>
+      <DialogContent
+        showCloseButton={false}
         className={cn(
-          "fixed z-50 top-0 right-0 h-[90vh]",
+          // Override default centering — position as right side panel
+          "fixed top-0 right-0 left-auto translate-x-0 translate-y-0",
+          "h-[90vh] mt-16 mr-8 rounded-2xl",
           "w-full max-w-[480px] md:w-[33%]",
-          "bg-white dark:bg-card shadow-2xl",
-          "flex flex-col mt-16 mr-8",
-          "animate-in slide-in-from-right duration-300"
+          "flex flex-col gap-0 p-0 overflow-hidden",
+          // Animate from right instead of zoom
+          "data-open:slide-in-from-right data-closed:slide-out-to-right"
         )}
       >
         {/* Close button */}
@@ -283,46 +228,31 @@ export function CreateViolationModal() {
           type="button"
           onClick={closeModal}
           className="absolute top-4 right-4 z-10 h-6 w-6 rounded-full bg-[#94A3B8] hover:bg-[#1B3A6B] flex items-center justify-center transition-colors"
-          aria-label="Close modal"
+          aria-label="Close"
         >
           <X className="h-3 w-3 text-white" />
         </button>
 
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
-          <h2 id="create-violation-title" className="text-xl font-bold text-foreground">
-            Create Violation
-          </h2>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Fill in the details to record a new traffic violation
-          </p>
-        </div>
+        <DialogHeader className="px-6 pt-6 pb-4 border-b border-border shrink-0 gap-1">
+          <DialogTitle className="text-xl font-bold">Create Violation</DialogTitle>
+          <DialogDescription>Fill in the details to record a new traffic violation</DialogDescription>
+        </DialogHeader>
 
-        {/* Scrollable form body */}
+        {/* Scrollable form */}
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto flex-1 px-6 py-4 space-y-5">
 
-            {/* ── Vehicle Info Section ─────────────────────── */}
+            {/* Vehicle Info */}
             <div>
-              <SectionHeader
-                title="Vehicle Info Section"
-                isOpen={vehicleOpen}
-                onToggle={() => setVehicleOpen((p) => !p)}
-                noBorder
-              />
+              <SectionHeader title="Vehicle Info Section" isOpen={vehicleOpen} onToggle={() => setVehicleOpen((p) => !p)} noBorder />
               {vehicleOpen && (
                 <div className="grid grid-cols-2 gap-x-4 gap-y-4 mt-3">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-muted-foreground">
-                      Enter Plate Number <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      placeholder="e.g 1213-fxb"
-                      value={form.plateNumber}
+                    <label className="text-xs text-muted-foreground">Enter Plate Number <span className="text-destructive">*</span></label>
+                    <Input placeholder="e.g 1213-fxb" value={form.plateNumber}
                       onChange={(e) => set("plateNumber")(e.target.value)}
-                      className="rounded-lg hover:border-[#1B3A6B]/40 hover:bg-[#1B3A6B]/5 focus-visible:ring-[#1B3A6B]/20"
-                      required
-                    />
+                      className="rounded-lg hover:border-[#1B3A6B]/40 hover:bg-[#1B3A6B]/5" required />
                   </div>
                   <SelectField label="Select Plate Type" placeholder="e.g Army" required
                     options={["Army", "Police", "Civil", "Commercial", "Private"]}
@@ -345,13 +275,9 @@ export function CreateViolationModal() {
 
             <div className="border-t border-border" />
 
-            {/* ── Offence Section ──────────────────────────── */}
+            {/* Offence Section */}
             <div>
-              <SectionHeader
-                title="Offence Section"
-                isOpen={offenceOpen}
-                onToggle={() => setOffenceOpen((p) => !p)}
-              />
+              <SectionHeader title="Offence Section" isOpen={offenceOpen} onToggle={() => setOffenceOpen((p) => !p)} />
               {offenceOpen && (
                 <div className="mt-3 space-y-4">
                   <SelectField label="Select Offence" placeholder="e.g Ambulance/Towing service" required
@@ -364,9 +290,7 @@ export function CreateViolationModal() {
                         "Using phone while driving", "Drunk driving"]}
                       value={form.eventType} onChange={set("eventType")} />
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-xs text-muted-foreground">
-                        Select Violation Date <span className="text-destructive">*</span>
-                      </label>
+                      <label className="text-xs text-muted-foreground">Select Violation Date <span className="text-destructive">*</span></label>
                       <div className="relative">
                         <Input type="date" value={form.violationDate}
                           onChange={(e) => set("violationDate")(e.target.value)}
@@ -411,53 +335,28 @@ export function CreateViolationModal() {
 
             <div className="border-t border-border" />
 
-            {/* ── Offence Files Section ─────────────────────── */}
+            {/* Files Section */}
             <div>
-              <SectionHeader
-                title="Offence Files Section"
-                isOpen={filesOpen}
-                onToggle={() => setFilesOpen((p) => !p)}
-              />
+              <SectionHeader title="Offence Files Section" isOpen={filesOpen} onToggle={() => setFilesOpen((p) => !p)} />
               {filesOpen && (
                 <div className="mt-3">
-                  <label className="text-xs text-muted-foreground block mb-1.5">
-                    Upload Files
-                  </label>
-
-                  {/* Choose Files box */}
+                  <label className="text-xs text-muted-foreground block mb-1.5">Upload Files</label>
                   <div className="rounded-lg border border-input bg-background p-3 min-h-[52px] flex items-center">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
+                    <Button type="button" variant="outline" size="sm"
                       className="h-8 text-xs gap-1.5 hover:bg-[#1B3A6B]/5 hover:border-[#1B3A6B]/40"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
+                      onClick={() => fileInputRef.current?.click()}>
                       <Upload className="h-3.5 w-3.5" />
                       Choose Files
                     </Button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={handleFileChange}
-                      accept="image/*,video/*,.pdf,.doc,.docx"
-                    />
+                    <input ref={fileInputRef} type="file" multiple className="hidden"
+                      onChange={handleFileChange} accept="image/*,video/*,.pdf,.doc,.docx" />
                   </div>
-
-                  {/* File rows rendered below the input box */}
                   {uploadFiles.map((uf, i) => (
-                    <FileRow
-                      key={`${uf.file.name}-${i}`}
-                      uploadFile={uf}
-                      onRemove={() => removeFile(i)}
-                    />
+                    <FileRow key={`${uf.file.name}-${i}`} uploadFile={uf} onRemove={() => removeFile(i)} />
                   ))}
                 </div>
               )}
             </div>
-
           </div>
 
           {/* Footer */}
@@ -468,13 +367,11 @@ export function CreateViolationModal() {
             </Button>
             <Button type="submit" disabled={isSubmitting}
               className="min-w-[88px] bg-[#0B1629] text-white hover:bg-[#1B3A6B]">
-              {isSubmitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin mr-2" />Submitting...</>
-              ) : "Submit"}
+              {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Submitting...</> : "Submit"}
             </Button>
           </div>
         </form>
-      </div>
-    </>
+      </DialogContent>
+    </Dialog>
   );
 }
