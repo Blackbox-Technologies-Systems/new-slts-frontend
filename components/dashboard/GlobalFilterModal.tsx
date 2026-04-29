@@ -97,10 +97,10 @@ export function GlobalFilterModal() {
   return (
     <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && closeModal()}>
       <DialogContent className={cn(
-    "fixed top-16 right-4",           // ← anchor to top-right
-    "translate-x-0 translate-y-0",    // ← cancel the default centering transforms
-    "left-auto",                       // ← cancel the default left-1/2
-    "max-w-[480px] w-[90vw]",
+    "fixed top-16 right-4",          
+    "translate-x-0 translate-y-0",    
+    "left-auto",                       
+    "max-w-120 w-[90vw]",
     "gap-0 p-0 overflow-hidden",
     "animate-in fade-in-0 slide-in-from-top-2 duration-200"
   )}>
