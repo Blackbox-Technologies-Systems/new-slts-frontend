@@ -209,12 +209,14 @@ export default function ViewViolationsPage() {
 
 	return (
 		<div className="space-y-6 animate-fade-in">
-			<div className="flex items-center justify-between">
-				<PageHeader
-					title="View Violation"
-					// description="Violation"
-					className="mt-0"
-				/>
+			<PageHeader
+				title="View Violations"
+				breadcrumbs={[
+					{ label: "Violation", href: "/dashboard/violations" },
+					{ label: "View Violations", href: "/dashboard/violations" },
+				]}
+				className="mt-0"
+			>
 				<Button
 					size="sm"
 					onClick={handleCreateViolation}
@@ -223,7 +225,7 @@ export default function ViewViolationsPage() {
 					<Plus className="h-4 w-4 mr-1.5" />
 					Create Violation
 				</Button>
-			</div>
+			</PageHeader>
 
 			<ViolationsTable
 				violations={VIOLATIONS_DATA}

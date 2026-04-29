@@ -101,6 +101,22 @@ export interface Violation {
   paymentStatus?: "paid" | "unpaid" | "pending";
 }
 
+// ─── Dispute Types ─────────────────────────────────────────────────────────────
+
+export type DisputeStatus = "under_review" | "escalated" | "upheld" | "open" | "overturned";
+
+export interface Dispute {
+  id: string;
+  sn: number;
+  offender: Offender;
+  pcn: string;
+  offenseType: string;
+  plateNo: string;
+  disputeDate: string;
+  amount: number;
+  status: DisputeStatus;
+}
+
 export interface DashboardStat {
   title: string;
   value: number;
