@@ -226,8 +226,8 @@ export default function DashboardPage() {
 
 	return (
 		<div className="space-y-6 animate-fade-in">
-			<PageHeader 
-				title="Dashboard" 
+			<PageHeader
+				title="Dashboard"
 				breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }]}
 			/>
 
