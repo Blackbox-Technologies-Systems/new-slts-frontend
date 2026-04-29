@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState } from "react";
 import { isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { Eye } from "lucide-react";
 import { cn, formatDate, formatTime, formatCurrency } from "@/lib/utils";
@@ -11,6 +11,7 @@ import {
 	BaseTableColumn,
 } from "@/components/dashboard/shared/BaseTable";
 import { useLocalTableData } from "@/hooks/useLocalTableData";
+import { DisputeDetailsModal } from "./DisputeDetailsModal";
 import type { Dispute, DisputeStatus } from "@/types";
 
 interface DisputesTableProps {
@@ -42,6 +43,14 @@ export function DisputesTable({
 	showFilters = false,
 	title = "Dispute Records",
 }: DisputesTableProps) {
+	const [selectedDispute, setSelectedDispute] = useState<Dispute | null>(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleViewDispute = (dispute: Dispute) => {
+		setSelectedDispute(dispute);
+		setIsModalOpen(true);
+	};
+
 	const {
 		currentPage,
 		setCurrentPage,
@@ -146,7 +155,8 @@ export function DisputesTable({
 						<Button
 							variant="ghost"
 							size="icon"
-							className="h-8 w-8 text-muted-foreground hover:text-primary"
+							className="h-8 w-8 text-muted-foreground hover:text-primary cursor-pointer"
+							onClick={() => handleViewDispute(dispute)}
 						>
 							<Eye className="h-4 w-4" />
 						</Button>
@@ -157,22 +167,30 @@ export function DisputesTable({
 	};
 
 	return (
-		<BaseTable<Dispute>
-			title={title}
-			data={paginatedData}
-			columns={columns}
-			className={className}
-			renderRow={renderRow}
-			showFilters={showFilters}
-			searchQuery={searchQuery}
-			onSearchChange={setSearchQuery}
-			searchPlaceholder="Search by name, PCN..."
-			dateRange={dateRange}
-			onDateChange={setDateRange}
-			currentPage={currentPage}
-			totalPages={totalPages}
-			totalItems={totalItems}
-			onPageChange={setCurrentPage}
-		/>
+		<>
+			<BaseTable<Dispute>
+				title={title}
+				data={paginatedData}
+				columns={columns}
+				className={className}
+				renderRow={renderRow}
+				showFilters={showFilters}
+				searchQuery={searchQuery}
+				onSearchChange={setSearchQuery}
+				searchPlaceholder="Search by name, PCN..."
+				dateRange={dateRange}
+				onDateChange={setDateRange}
+				currentPage={currentPage}
+				totalPages={totalPages}
+				totalItems={totalItems}
+				onPageChange={setCurrentPage}
+			/>
+
+			<DisputeDetailsModal
+				dispute={selectedDispute}
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+			/>
+		</>
 	);
 }

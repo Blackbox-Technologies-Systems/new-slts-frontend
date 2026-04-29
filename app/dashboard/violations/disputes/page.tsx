@@ -16,6 +16,17 @@ const DISPUTES_DATA: Dispute[] = [
 		disputeDate: "2026-02-15T08:30:00Z",
 		amount: 5000,
 		status: "under_review",
+		disputeReason: "Wrong vehicle identified",
+		evidenceImages: [
+			"https://images.unsplash.com/photo-1544333346-64e4fe18204b?q=80&w=1470&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1470&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1580273916550-e323be2ae537?q=80&w=1528&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?q=80&w=1528&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1470&auto=format&fit=crop",
+		],
+		actionBy: "John Wick",
+		actionDate: "2026-02-12T00:00:00Z",
+		feedback: "The vehicle in the photo is a red Toyota Camry but my vehicle is a black Honda Civic. The plate number was cloned.",
 	},
 	{
 		id: "d2",
@@ -27,6 +38,12 @@ const DISPUTES_DATA: Dispute[] = [
 		disputeDate: "2026-02-15T09:30:00Z",
 		amount: 15000,
 		status: "escalated",
+		disputeReason: "Signal was amber",
+		evidenceImages: [
+			"https://images.unsplash.com/photo-1545129139-1beb780cf337?q=80&w=1374&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1566150905458-1bf1fd111c90?q=80&w=1470&auto=format&fit=crop",
+		],
+		feedback: "I was already half-way through the intersection when the light turned red. The sensor triggered prematurely.",
 	},
 	{
 		id: "d3",
@@ -136,6 +153,16 @@ const DISPUTES_DATA: Dispute[] = [
 		status: (
 			["under_review", "escalated", "upheld", "open", "overturned"] as const
 		)[i % 5],
+		disputeReason: [
+			"Wrong vehicle",
+			"Cloned plate",
+			"Signal amber",
+			"Illegal parking",
+		][i % 4],
+		evidenceImages: [
+			"https://images.unsplash.com/photo-1544333346-64e4fe18204b?q=80&w=1470&auto=format&fit=crop",
+			"https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1470&auto=format&fit=crop",
+		],
 	})),
 ];
 

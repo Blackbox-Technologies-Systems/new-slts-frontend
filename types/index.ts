@@ -115,6 +115,12 @@ export interface Dispute {
   disputeDate: string;
   amount: number;
   status: DisputeStatus;
+  // Detail fields
+  disputeReason?: string;
+  evidenceImages?: string[];
+  actionBy?: string;
+  actionDate?: string;
+  feedback?: string;
 }
 
 export interface DashboardStat {
