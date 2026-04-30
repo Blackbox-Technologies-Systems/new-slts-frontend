@@ -61,44 +61,47 @@ export function ImageLightbox({
 	};
 
 	return createPortal(
-		<div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/95 animate-in fade-in duration-200">
+		<div 
+			className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 animate-in fade-in duration-200"
+			style={{ pointerEvents: "auto" }}
+		>
 			<div className="absolute inset-0 cursor-zoom-out" onClick={onClose} />
 
 			<button
-				className="absolute top-6 right-6 text-white/70 hover:text-white p-2 rounded-full bg-white/10 z-10000 transition-colors cursor-pointer"
+				className="absolute top-6 right-6 text-white opacity-50 hover:opacity-100 p-2 rounded-full bg-transparent hover:bg-white/10 z-10000 transition-all cursor-pointer"
 				onClick={onClose}
 			>
-				<X className="h-8 w-8" />
+				<X className="h-6 w-6" />
 			</button>
 
 			<button
-				className="absolute left-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 rounded-full bg-white/10 backdrop-blur-sm transition-all hover:bg-white/20 z-10000 cursor-pointer"
+				className="absolute left-1/5 top-1/2 -translate-y-1/2 text-white opacity-50 hover:opacity-100 p-3 rounded-full bg-transparent hover:bg-white/10 z-10000 transition-all cursor-pointer"
 				onClick={handlePrev}
 			>
-				<ChevronLeft className="h-10 w-10" />
+				<ChevronLeft className="h-8 w-8" />
 			</button>
 
 			<div
-				className="relative w-[85vw] h-[85vh] max-w-5xl z-10 select-none"
+				className="relative w-[60vw] h-[70vh] max-w-4xl z-10 select-none shadow-2xl rounded-lg overflow-hidden"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<Image
 					src={images[index]}
 					alt={`Gallery Image ${index + 1}`}
 					fill
-					className="object-contain pointer-events-none"
+					className="pointer-events-none object-cover"
 					priority
 				/>
 			</div>
 
 			<button
-				className="absolute right-6 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-3 rounded-full bg-white/10 backdrop-blur-sm transition-all hover:bg-white/20 z-10000 cursor-pointer"
+				className="absolute right-1/5 top-1/2 -translate-y-1/2 text-white opacity-50 hover:opacity-100 p-3 rounded-full bg-transparent hover:bg-white/10 z-10000 transition-all cursor-pointer"
 				onClick={handleNext}
 			>
-				<ChevronRight className="h-10 w-10" />
+				<ChevronRight className="h-8 w-8" />
 			</button>
 
-			<div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/70 bg-black/40 px-4 py-2 rounded-full backdrop-blur-md z-10000">
+			<div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/80 bg-black/50 px-3 py-1.5 text-sm rounded-full backdrop-blur-md z-10000 opacity-80">
 				{index + 1} / {images.length}
 			</div>
 		</div>,

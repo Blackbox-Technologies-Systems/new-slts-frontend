@@ -42,7 +42,19 @@ export function DisputeDetailsModal({
 	return (
 		<>
 			<Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-				<DialogContent className="min-w-xl md:max-w-106.25 top-18! right-6! bottom-auto! left-auto! translate-x-0! translate-y-0!">
+				<DialogContent
+					className="min-w-xl md:max-w-106.25 top-18! right-6! bottom-auto! left-auto! translate-x-0! translate-y-0!"
+					onInteractOutside={(e) => {
+						if (selectedImageIndex !== null) {
+							e.preventDefault();
+						}
+					}}
+					onEscapeKeyDown={(e) => {
+						if (selectedImageIndex !== null) {
+							e.preventDefault();
+						}
+					}}
+				>
 					<DialogHeader className="flex flex-row items-center justify-between border-b pb-4">
 						<div className="space-y-1">
 							<DialogTitle className="text-2xl font-bold text-[#0F172A]">
