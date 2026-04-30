@@ -7,6 +7,9 @@ import type { Violation } from "@/types";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { openModal } from "@/store/slices/uiSlice";
+import { MODAL_KEYS } from "@/constants";
+import { useUI } from "@/hooks/useUI";
 
 // ─── DUMMY DATA ───────────────────────────────────────────────────────────────
 // Would replace these with API calls when ready
@@ -200,11 +203,10 @@ const VIOLATIONS_DATA: Violation[] = [
 
 export default function ViewViolationsPage() {
 	const router = useRouter();
+	  const { openModal } = useUI();
 
 	const handleCreateViolation = () => {
-		// Navigate to create violation or open modal
-		// router.push('/dashboard/violations/create');
-		alert("Create violation clicked");
+		  openModal(MODAL_KEYS.CREATE_VIOLATION);
 	};
 
 	return (

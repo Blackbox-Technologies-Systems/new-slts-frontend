@@ -45,7 +45,7 @@ export function ResendPaymentModal({
 	};
 
 	return (
-		<Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+		<Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
 			<DialogContent className="sm:max-w-106.25 top-18! right-6! bottom-auto! left-auto! translate-x-0! translate-y-0!">
 				<DialogHeader>
 					<DialogTitle className="text-xl">Payment summary</DialogTitle>
