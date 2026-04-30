@@ -124,7 +124,7 @@
 	/* ─── Supporting UI Colors ───────────────────────────────────────────────────
    * Secondary actions, hover states, and subtle accents */
 	--secondary: #f1f5f9;
-	/* --secondary-foreground: #0f172a; */
+	--secondary-foreground: #0f172a;
 
 	/* ─── Subdued & Disabled States ────────────────────────────────────────────────
    * Muted text, disabled inputs, and placeholder content */
@@ -134,7 +134,7 @@
 	/* ─── Interactive Highlight Colors ─────────────────────────────────────────────
    * Selected items, focus rings, and accent elements */
 	--accent: #f1f5f9;
-	/* --accent-foreground: #0f172a; */
+	--accent-foreground: #0f172a;
 
 	/* ─── Feedback & Status Colors ─────────────────────────────────────────────────
    * Errors, warnings, success states, and destructive actions */

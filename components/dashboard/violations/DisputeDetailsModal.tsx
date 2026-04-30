@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { cn, formatDate } from "@/lib/utils";
 import { ImageLightbox } from "@/components/dashboard/shared/ImageLightbox";
+import { DisputeActions } from "./DisputeActions";
 import type { Dispute } from "@/types";
 import Image from "next/image";
 
@@ -57,15 +58,17 @@ export function DisputeDetailsModal({
 				>
 					<DialogHeader className="flex flex-row items-center justify-between border-b pb-4">
 						<div className="space-y-1">
-							<DialogTitle className="text-2xl font-bold text-[#0F172A]">
+							<DialogTitle className="text-2xl font-bold text-accent-foreground">
 								Dispute Details
 							</DialogTitle>
 							<p className="text-sm text-muted-foreground">
 								PCN: {dispute.pcn}
 							</p>
 						</div>
-						<DialogClose className="w-4 h-4 bg-slate-900" asChild />
+						<DialogClose className="w-4 h-4 bg-primary" asChild />
 					</DialogHeader>
+
+					<DisputeActions dispute={dispute} onActionComplete={onClose} />
 
 					<Accordion
 						type="multiple"
@@ -74,7 +77,7 @@ export function DisputeDetailsModal({
 					>
 						{/* Dispute Info Section */}
 						<AccordionItem value="dispute-info" className="border-none">
-							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-[#0F172A]">
+							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-accent-foreground">
 								<div className="flex items-center gap-2">
 									<span>Dispute Info</span>
 								</div>
@@ -131,7 +134,7 @@ export function DisputeDetailsModal({
 							id="accordion-images"
 							className="border-none"
 						>
-							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-[#0F172A]">
+							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-accent-foreground">
 								<span>Image</span>
 							</AccordionTrigger>
 							<AccordionContent>
@@ -165,7 +168,7 @@ export function DisputeDetailsModal({
 
 						{/* Video Section */}
 						<AccordionItem value="video" className="border-none">
-							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-[#0F172A]">
+							<AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-accent-foreground">
 								<span>Video</span>
 							</AccordionTrigger>
 							<AccordionContent>
