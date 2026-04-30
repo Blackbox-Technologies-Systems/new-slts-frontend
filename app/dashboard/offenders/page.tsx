@@ -6,7 +6,7 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { BaseTable } from "@/components/dashboard/shared/BaseTable";
-import { ViolationStatsCard } from "@/components/dashboard/violations/ViolationStatsCard";
+import { StatsCard } from "@/components/common/StatsCard";
 import { RevenueAlert } from "@/components/dashboard/shared/RevenueAlert";
 import { PageHeader } from "@/components/common/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -239,7 +239,7 @@ export default function OffendersPage() {
       {/* ── Stat Cards ── */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         {OFFENDER_STATS.map((stat) => (
-          <ViolationStatsCard key={stat.title} stat={stat} />
+          <StatsCard key={stat.title} stat={stat} />
         ))}
       </div>
 

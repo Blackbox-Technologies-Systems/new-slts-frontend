@@ -1,56 +1,75 @@
-import { TrendingDown, TrendingUp } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+// components/common/StatsCard.tsx — replaces both files
+
+"use client";
+
 import { cn } from "@/lib/utils";
+import {
+  BarChart3, CheckCircle2, AlertTriangle,
+  Users, Wallet, Clock, Activity,
+  ArrowUp, ArrowDown, ChartNoAxesColumn,
+} from "lucide-react";
+import type { DashboardStat } from "@/types";
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  BarChart3:         <BarChart3 className="h-5 w-5" />,
+  ChartNoAxesColumn: <ChartNoAxesColumn className="h-5 w-5" />,
+  CheckCircle2:      <CheckCircle2 className="h-5 w-5" />,
+  AlertTriangle:     <AlertTriangle className="h-5 w-5" />,
+  Users:             <Users className="h-5 w-5" />,
+  Wallet:            <Wallet className="h-5 w-5" />,
+  Clock:             <Clock className="h-5 w-5" />,
+  Activity:          <Activity className="h-5 w-5" />,
+};
 
 interface StatsCardProps {
-  title: string;
-  value: string | number;
-  change: number;
-  changeType: "increase" | "decrease";
-  icon: React.ReactNode;
-  description?: string;
+  stat: DashboardStat;
   className?: string;
 }
 
-export function StatsCard({
-  title,
-  value,
-  change,
-  changeType,
-  icon,
-  description,
-  className,
-}: StatsCardProps) {
-  const isPositive = changeType === "increase";
+export function StatsCard({ stat, className }: StatsCardProps) {
+  const formatValue = (value: number) =>
+    new Intl.NumberFormat("en-US").format(value);
 
   return (
-    <Card className={cn("hover:shadow-md transition-shadow", className)}>
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold tracking-tight">{value}</p>
-          </div>
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-            {icon}
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center gap-1">
-          <span
-            className={cn(
-              "inline-flex items-center gap-0.5 text-sm font-medium",
-              isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+    <div className={cn("rounded-2xl bg-card p-4 dark:border-border", className)}>
+      <div className="flex items-start">
+        <div className="flex-1">
+          {/* Icon + change indicator */}
+          <div className="flex justify-between gap-2 mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full p-2 bg-icon-accent text-primary">
+              {ICON_MAP[stat.icon] ?? <BarChart3 className="h-5 w-5" />}
+            </div>
+            {stat.change && (
+              <div className="flex items-center gap-1 text-xs h-8 font-medium px-1.5 rounded-3xl bg-icon-accent">
+                {stat.change.trend === "up"
+                  ? <ArrowUp className="h-3 w-3" />
+                  : stat.change.trend === "down"
+                  ? <ArrowDown className="h-3 w-3" />
+                  : null}
+                <span>
+                  {stat.change.trend === "up" ? "+" : stat.change.trend === "down" ? "-" : ""}
+                  {stat.change.value}
+                 {(stat.change.trend === "up" || stat.change.trend === "down") ? "%" : ""}
+                  {stat.suffix ? ` ${stat.suffix}` : ""}
+                </span>
+              </div>
             )}
-          >
-            {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-            {Math.abs(change)}%
-          </span>
-          <span className="text-sm text-muted-foreground">
-            {description ?? "vs last month"}
-          </span>
+          </div>
+
+          {/* Value */}
+          <div className="inline-flex items-baseline gap-1">
+            {stat.prefix && (
+              <span className="text-lg font-semibold text-primary">{stat.prefix}</span>
+            )}
+            <span className="text-3xl font-semibold text-primary">
+              {formatValue(stat.value)}
+            </span>
+          </div>
+
+          {/* Title */}
+          <p className="text-sm text-muted-foreground mt-3">{stat.title}</p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
