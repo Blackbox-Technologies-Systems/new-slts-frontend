@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ModalBackdrop } from "./ModalBackdrop"
-import { AlertTriangle, X } from "lucide-react"
+import { AlertTriangle, ChevronDown, X } from "lucide-react"
 import { ViolationReference } from "../ViolationReference"
 
 const REJECTION_REASONS = [
@@ -65,6 +65,53 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
                     The marshal who captured this violation will be notified. This violation will no longer be eligible for payment unless re-submitted.
                 </p>
             </div>
-        </ModalBackdrop>
+
+            {/* Reason Dropdown */}
+            <div className="mt-5">
+                <label className="block text-sm font-semibold text-[#010427] mb-1.5">
+                    Reason for rejection <span className="text-red-500">*</span>
+                </label>
+
+                <div className="relative">
+                    <button
+                        type="button"
+                        onClick={() => setDropOpen(v => !v)}
+                        className="w-full flex items-center justify-between px-4 py-3 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400"
+                    >
+                        <span className={reason ? "text-slate-800" : "text-slate-400"}>
+                            {reason || "e.g Incorrect vehicle information"}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${dropOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {dropOpen && (
+                        <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
+                            {REJECTION_REASONS.map(r => (
+                                <button
+                                    key={r}
+                                    type="button"
+                                    onClick={() => { setReason(r); setDropOpen(false) }}
+                                    className={`w-full text-left px-4 py-2.5 text-sm transition-colors
+                                        ${reason === r ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-50"}`}
+                                >
+                                    {r}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-6 justify-end">
+                <button type="button" onClick={onClose}
+                    className="px-5 py-2.5 text-sm font-semibold text-slate-[#010427] border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onClick={handleConfirm} disabled={!reason}
+                    className="px-5 py-2.5 text-sm font-semibold bg-[#010427] text-white rounded-xl hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    Confirm Rejection
+                </button>
+            </div>
+        </ModalBackdrop >
     )
 }
