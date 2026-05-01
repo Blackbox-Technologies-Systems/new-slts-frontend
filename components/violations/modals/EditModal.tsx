@@ -29,6 +29,13 @@ export function EditModal({ open, v, onClose }: EditModalProps) {
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             setForm(prev => ({ ...prev, [key]: e.target.value }))
 
+    const handleSave = () => {
+        // TODO: PATCH /violations/:id  → { ...form }
+        // On success: toast.success() + refetch violation + onClose()
+        console.log("Edit payload:", form)
+        onClose()
+    }
+
     const inp = "w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 placeholder:text-slate-400"
 
     return (
@@ -108,6 +115,28 @@ export function EditModal({ open, v, onClose }: EditModalProps) {
                     <label className="block text-xs font-semibold text-slate-600 mb-1.5">Location</label>
                     <input type="text" value={form.location} onChange={update("location")} placeholder="Enter location" className={inp} />
                 </div>
+
+                <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                        Additional notes (optional)
+                    </label>
+                    <textarea value={form.notes} onChange={update("notes")}
+                        maxLength={500} rows={3} placeholder="e.g Acura"
+                        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:border-slate-400 placeholder:text-slate-400"
+                    />
+                    <p className="text-xs text-slate-400 text-right mt-1">{form.notes.length}/500 characters</p>
+                </div>
+            </div>
+
+            <div className="flex gap-3 mt-6 justify-end">
+                <button type="button" onClick={onClose}
+                    className="px-5 py-2.5 text-sm font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onClick={handleSave}
+                    className="px-5 py-2.5 text-sm font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors">
+                    Save Changes
+                </button>
             </div>
         </ModalBackdrop>
     )
