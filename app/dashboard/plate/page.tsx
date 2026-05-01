@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Search, ChevronRight, Eye, Clock } from "lucide-react"
 import type { PlateResult, PlateViolation, RecentSearch } from "@/types/violations"
+import { CardRow, InfoCard, PaymentBadge } from "@/components/violations"
 
 // Mock data
 // TODO: replace with apiClient.post("/plate/search", { plate_number }) on submit
@@ -168,6 +169,46 @@ export default function PlateNumberPage() {
         </div>
       )}
 
+      {/* ── Results ── */}
+      {pageState === "results" && result && !loading && (
+        <>
+          {/* 3-column stat strip */}
+          <div className="flex flex-wrap gap-10 mb-6">
+            {[
+              { label: "Plate Number", value: result.plate_number },
+              { label: "PCN NO", value: result.pcn },
+              { label: "Phone Number", value: result.phone_number },
+            ].map(({ label, value }) => (
+              <div key={label}>
+                <p className="text-lg font-bold text-slate-900">{value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* 2 info cards — Vehicle Info + Offender Info */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            <InfoCard title="Vehicle Info">
+              <CardRow label="Brand">{result.brand}</CardRow>
+              <CardRow label="Type">{result.vehicle_type}</CardRow>
+              <CardRow label="Vehicle Color">{result.vehicle_color}</CardRow>
+              <CardRow label="Plate Number">{result.plate_number}</CardRow>
+              <CardRow label="Plate Type">{result.plate_type}</CardRow>
+            </InfoCard>
+
+            <InfoCard title="Offender Info">
+              <CardRow label="Full Name">{result.full_name}</CardRow>
+              <CardRow label="Phone Number">{result.phone_number}</CardRow>
+              <CardRow label="Email Address">{result.email_address}</CardRow>
+              <CardRow label="Violation Status">{result.violation_status}</CardRow>
+              <CardRow label="Payment Status"><PaymentBadge status={result.payment_status} /></CardRow>
+            </InfoCard>
+          </div>
+          
+        </>
+      )}
     </div>
+
+
   )
 }
