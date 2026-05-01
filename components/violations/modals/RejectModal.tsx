@@ -4,6 +4,7 @@ import { useState } from "react"
 import { ModalBackdrop } from "./ModalBackdrop"
 import { AlertTriangle, ChevronDown, X } from "lucide-react"
 import { ViolationReference } from "../ViolationReference"
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
 
 const REJECTION_REASONS = [
     "Insufficient evidence",
@@ -48,12 +49,12 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div>
-                    <h2 className="text-lg font-bold text-[#010427]">Reject Violation?</h2>
-                    <p className="text-sm text-slate-500">This action will mark the violation as rejected</p>
+                    <DialogTitle className="text-lg font-bold text-[#010427]">Reject Violation?</DialogTitle>
+                    <DialogDescription className="text-sm text-slate-500">This action will mark the violation as rejected</DialogDescription>
                 </div>
-                <button type="button" onClick={onClose} className="text-[#64748B] hover:text-slate-600 p-1 transition-colors">
+                {/* <button type="button" onClick={onClose} className="text-[#64748B] hover:text-slate-600 p-1 transition-colors">
                     <X className="w-5 h-5" />
-                </button>
+                </button> */}
             </div>
 
             <ViolationReference v={v} />

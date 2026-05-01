@@ -11,8 +11,8 @@ interface ModalBackdropProps {
 export function ModalBackdrop({ open, onClose, children }: ModalBackdropProps) {
     return (
         <Dialog open={open} onOpenChange={v => { if (!v) onClose() }}>
-            <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
-                <div className="p-6 max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden fixed top-16 right-4 translate-x-0 translate-y-0 m-0 left-auto modal-scroll-area">
+                <div className="p-6 max-h-180 overflow-y-auto">
                     {children}
                 </div>
             </DialogContent>

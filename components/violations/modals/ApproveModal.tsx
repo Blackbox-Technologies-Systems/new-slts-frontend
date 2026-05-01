@@ -4,6 +4,7 @@ import { useState } from "react"
 import { ModalBackdrop } from "./ModalBackdrop"
 import { ViolationReference } from "../ViolationReference"
 import { Check, Info, X } from "lucide-react"
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
 
 const CHECKLIST = [
     "Evidence reviewed and valid",
@@ -32,12 +33,12 @@ export function ApproveModal({ open, v, onClose }: ApproveModalProps) {
         <ModalBackdrop open={open} onClose={onClose}>
             <div className="flex items-start justify-between">
                 <div>
-                    <h2 className="text-lg font-bold text-[#010427]">Approve violation</h2>
-                    <p className="text-sm text-[#64728B]">This will mark the violation as approved and notify the offender</p>
+                    <DialogTitle className="text-lg font-bold text-[#010427]">Approve violation</DialogTitle>
+                    <DialogDescription className="text-sm text-[#64728B]">This will mark the violation as approved and notify the offender</DialogDescription>
                 </div>
-                <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 transition-colors">
+                {/* <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 transition-colors">
                     <X className="w-5 h-5" />
-                </button>
+                </button> */}
             </div>
 
             <ViolationReference v={v} />
@@ -61,8 +62,8 @@ export function ApproveModal({ open, v, onClose }: ApproveModalProps) {
             <div className="mt-4 space-y-2">
                 {CHECKLIST.map(item => (
                     <div key={item} className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded-full border-2 border-emerald-500 flex items-center justify-center shrink-0">
-                            <Check className="w-3 h-3 text-emerald-500" />
+                        <div className="w-5 h-5 rounded-full border-2 border-[#12823B] flex items-center justify-center shrink-0">
+                            <Check className="w-3 h-3 text-[#12823B]" />
                         </div>
                         <span className="text-sm text-slate-700">{item}</span>
                     </div>
@@ -70,9 +71,9 @@ export function ApproveModal({ open, v, onClose }: ApproveModalProps) {
             </div>
 
             {/* Notice */}
-            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex gap-2">
-                <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <p className="text-sm text-emerald-700">
+            <div className="mt-4 p-3 bg-[#F2FFFB] border border-[#12823B] rounded-xl flex gap-2">
+                <Info className="w-4 h-4 text-[#12823B] shrink-0 mt-0.5" />
+                <p className="text-sm text-[#12823B]">
                     Once approved, the offender will be notified and the fine of <strong>{v.fine}</strong> becomes due for payment. This action is logged and cannot be undone without a new review.
                 </p>
             </div>
