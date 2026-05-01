@@ -9,7 +9,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Search, ChevronRight, Eye, Clock } from "lucide-react"
 import type { PlateResult, PlateViolation, RecentSearch } from "@/types/violations"
-import { CardRow, InfoCard, PaymentBadge } from "@/components/violations"
+import { CardRow, InfoCard, PaymentBadge, StatusBadge } from "@/components/violations"
 
 // Mock data
 // TODO: replace with apiClient.post("/plate/search", { plate_number }) on submit
@@ -204,11 +204,59 @@ export default function PlateNumberPage() {
               <CardRow label="Payment Status"><PaymentBadge status={result.payment_status} /></CardRow>
             </InfoCard>
           </div>
-          
+
+          {/* Violations table */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100">
+              <h2 className="text-base font-bold text-slate-900">
+                Violations linked to {result.plate_number}
+              </h2>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-100">
+                  <tr>
+                    <Th>S/N</Th>
+                    <Th>PCN</Th>
+                    <Th>Offense Type</Th>
+                    <Th>Date</Th>
+                    <Th>Status</Th>
+                    <Th>Payment</Th>
+                    <Th>Action</Th>
+                  </tr>
+                </thead>
+                
+                <tbody className="divide-y divide-slate-100">
+                  {result.violations.map((v: PlateViolation, i: number) => (
+                    <tr key={v.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-4 py-3.5 text-sm text-slate-500">{i + 1}</td>
+                      <td className="px-4 py-3.5 text-sm text-slate-400 font-mono">{v.pcn}</td>
+                      <td className="px-4 py-3.5 text-sm font-medium text-slate-800">{v.offense_type}</td>
+                      <td className="px-4 py-3.5 text-sm text-slate-600 whitespace-nowrap">{v.date}</td>
+                      <td className="px-4 py-3.5"><StatusBadge status={v.approval_status} /></td>
+                      <td className="px-4 py-3.5"><PaymentBadge status={v.payment_status} /></td>
+                      <td className="px-4 py-3.5">
+                        
+                        {/* Eye icon → view violation detail page */}
+                        <Link href={`/dashboard/violations/${v.pcn}`}
+                          className="text-slate-400 hover:text-slate-700 transition-colors">
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-6 py-3 border-t border-slate-100 text-xs text-slate-400">
+              Showing {result.violations.length} violation{result.violations.length !== 1 ? "s" : ""} for {result.plate_number}
+            </div>
+          </div>
+
         </>
       )}
     </div>
-
-
   )
 }
