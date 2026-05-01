@@ -48,10 +48,10 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div>
-                    <h2 className="text-lg font-bold text-slate-900">Reject Violation?</h2>
+                    <h2 className="text-lg font-bold text-[#010427]">Reject Violation?</h2>
                     <p className="text-sm text-slate-500">This action will mark the violation as rejected</p>
                 </div>
-                <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 transition-colors">
+                <button type="button" onClick={onClose} className="text-[#64748B] hover:text-slate-600 p-1 transition-colors">
                     <X className="w-5 h-5" />
                 </button>
             </div>
@@ -76,12 +76,12 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
                     <button
                         type="button"
                         onClick={() => setDropOpen(v => !v)}
-                        className="w-full flex items-center justify-between px-4 py-3 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400"
+                        className="w-full flex items-center justify-between px-4 py-3 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#64748B]"
                     >
-                        <span className={reason ? "text-slate-800" : "text-slate-400"}>
+                        <span className={reason ? "text-[#010427]" : "text-[#64748B]"}>
                             {reason || "e.g Incorrect vehicle information"}
                         </span>
-                        <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${dropOpen ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 text-[#64748B] transition-transform ${dropOpen ? "rotate-180" : ""}`} />
                     </button>
                     {dropOpen && (
                         <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden">
@@ -91,7 +91,7 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
                                     type="button"
                                     onClick={() => { setReason(r); setDropOpen(false) }}
                                     className={`w-full text-left px-4 py-2.5 text-sm transition-colors
-                                        ${reason === r ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-50"}`}
+                                        ${reason === r ? "bg-[#010427] text-white" : "text-[#010427] hover:bg-slate-50"}`}
                                 >
                                     {r}
                                 </button>
@@ -101,6 +101,20 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
                 </div>
             </div>
 
+            {/* Notes */}
+            <div className="mt-4">
+                <label className="block text-sm font-semibold text-[#010427] mb-1.5">
+                    Additional notes (optional)
+                </label>
+                <textarea
+                    value={notes}
+                    onChange={e => setNotes(e.target.value)}
+                    maxLength={500} rows={4} placeholder="e.g Acura"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none focus:outline-none focus:border-[#64748B] placeholder:text-[#64748B]"
+                />
+                <p className="text-xs text-[#64748B] text-right mt-1">{notes.length}/500 characters</p>
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3 mt-6 justify-end">
                 <button type="button" onClick={onClose}
@@ -108,7 +122,7 @@ export function RejectModal({ open, v, onClose }: RejectModalProps) {
                     Cancel
                 </button>
                 <button type="button" onClick={handleConfirm} disabled={!reason}
-                    className="px-5 py-2.5 text-sm font-semibold bg-[#010427] text-white rounded-xl hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    className="px-5 py-2.5 text-sm font-semibold bg-[#010427] text-white rounded-xl hover:bg-[#010427] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                     Confirm Rejection
                 </button>
             </div>
