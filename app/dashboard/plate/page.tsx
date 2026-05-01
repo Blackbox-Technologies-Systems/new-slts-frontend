@@ -9,7 +9,7 @@ import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { Search, ChevronRight, Eye, Clock } from "lucide-react"
 import type { PlateResult, PlateViolation, RecentSearch } from "@/types/violations"
-import { CardRow, InfoCard, PaymentBadge, StatusBadge } from "@/components/violations"
+import { CardRow, EvidenceLightbox, InfoCard, PaymentBadge, StatusBadge } from "@/components/violations"
 
 // Mock data
 // TODO: replace with apiClient.post("/plate/search", { plate_number }) on submit
@@ -226,7 +226,7 @@ export default function PlateNumberPage() {
                     <Th>Action</Th>
                   </tr>
                 </thead>
-                
+
                 <tbody className="divide-y divide-slate-100">
                   {result.violations.map((v: PlateViolation, i: number) => (
                     <tr key={v.id} className="hover:bg-slate-50 transition-colors">
@@ -237,7 +237,7 @@ export default function PlateNumberPage() {
                       <td className="px-4 py-3.5"><StatusBadge status={v.approval_status} /></td>
                       <td className="px-4 py-3.5"><PaymentBadge status={v.payment_status} /></td>
                       <td className="px-4 py-3.5">
-                        
+
                         {/* Eye icon → view violation detail page */}
                         <Link href={`/dashboard/violations/${v.pcn}`}
                           className="text-slate-400 hover:text-slate-700 transition-colors">
@@ -254,8 +254,28 @@ export default function PlateNumberPage() {
               Showing {result.violations.length} violation{result.violations.length !== 1 ? "s" : ""} for {result.plate_number}
             </div>
           </div>
-
         </>
+      )}
+      {/* Loading skeleton */}
+      {loading && (
+        <div className="space-y-4 animate-pulse">
+          <div className="h-6 w-64 bg-slate-200 rounded-lg" />
+          <div className="flex gap-4">
+            <div className="flex-1 h-48 bg-slate-200 rounded-2xl" />
+            <div className="flex-1 h-48 bg-slate-200 rounded-2xl" />
+          </div>
+          <div className="h-48 bg-slate-200 rounded-2xl" />
+        </div>
+      )}
+
+      {/* Lightbox — wired for future use when evidence is returned per violation */}
+      {lightboxIndex !== null && (
+        <EvidenceLightbox
+          items={[]} // TODO: pass evidence from selected violation
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNav={setLightboxIndex}
+        />
       )}
     </div>
   )
