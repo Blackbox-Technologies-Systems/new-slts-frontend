@@ -7,9 +7,45 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Search, ChevronRight } from "lucide-react"
+import { Search, ChevronRight, Eye, Clock } from "lucide-react"
+import type { PlateResult, PlateViolation, RecentSearch } from "@/types/violations"
 
+// Mock data
+// TODO: replace with apiClient.post("/plate/search", { plate_number }) on submit
 
+const MOCK_RESULT: PlateResult = {
+  plate_number: "ABC-123-DE",
+  pcn: "EDTKT74764",
+  phone_number: "08065412389",
+  brand: "Toyota",
+  vehicle_type: "Car",
+  vehicle_color: "Gray",
+  plate_type: "Visitor",
+  full_name: "John Wick",
+  email_address: "johnwick@example.com",
+  violation_status: "Active",
+  payment_status: "Unpaid",
+  violations: [
+    { id: "1", pcn: "EDTKT74764", offense_type: "Obstruction on Highway", date: "15 FEB 2026 8:30 AM", approval_status: "Rejected", payment_status: "Unpaid" },
+    { id: "2", pcn: "EDTKT74765", offense_type: "Traffic Light Violation", date: "15 FEB 2026 9:30 AM", approval_status: "Submitted", payment_status: "Pending" },
+    { id: "3", pcn: "EDTKT74766", offense_type: "Illegal Parking", date: "15 FEB 2026 11:30 AM", approval_status: "Approved", payment_status: "Paid" },
+  ],
+}
+
+const MOCK_RECENT: RecentSearch[] = [
+  { plate: "ABC-123-DE", label: "2 mins ago" },
+  { plate: "KJA-445-ST", label: "1 hour ago" },
+  { plate: "FNS-427-P", label: "Yesterday" },
+]
+
+// Table header cell
+function Th({ children }: { children: React.ReactNode }) {
+  return (
+    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+      {children}
+    </th>
+  )
+}
 
 {/* Page */ }
 
@@ -18,7 +54,7 @@ type PageState = "idle" | "typing" | "results"
 export default function PlateNumberPage() {
   const [query, setQuery] = useState("")
   const [pageState, setPageState] = useState<PageState>("idle")
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<PlateResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -34,8 +70,29 @@ export default function PlateNumberPage() {
   }
 
   const handleSubmit = async (plate: string) => {
+    if (!plate.trim()) return
+    setQuery(plate)
+    setPageState("results")
+    setLoading(true)
 
+    // TODO: replace with real API call:
+    //   const data = await apiClient.post("/plate/search", { plate_number: plate })
+    //   setResult(data)
+    await new Promise(r => setTimeout(r, 600)) // simulate latency
+    setResult(MOCK_RESULT)
+    setLoading(false)
   }
+
+  // Close recent dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        if (pageState === "typing" && !result) setPageState("idle")
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [pageState, result])
 
   return (
     <div className="p-6">
@@ -64,6 +121,28 @@ export default function PlateNumberPage() {
               className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 placeholder:text-slate-400"
             />
 
+            {/* Recent searches dropdown — visible while typing */}
+            {pageState === "typing" && !result && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                <p className="px-4 pt-3 pb-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  Recent search
+                </p>
+                {MOCK_RECENT.map(s => (
+                  <button
+                    key={s.plate}
+                    type="button"
+                    onClick={() => handleSubmit(s.plate)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="flex items-center gap-2 text-sm text-slate-700">
+                      <Clock className="w-4 h-4 text-slate-400" />
+                      {s.plate}
+                    </span>
+                    <span className="text-xs text-slate-400">{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <button
@@ -77,7 +156,7 @@ export default function PlateNumberPage() {
         </div>
       </div>
 
-      {/* Idle state */}
+      {/*  Idle state  */}
       {pageState === "idle" && (
         <div className="flex flex-col items-center justify-center py-24 text-slate-400">
           <svg width="72" height="72" viewBox="0 0 72 72" fill="none" className="mb-4 opacity-30">
