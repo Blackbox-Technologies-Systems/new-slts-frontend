@@ -13,6 +13,7 @@ import {
 import { useLocalTableData } from "@/hooks/useLocalTableData";
 import { ResendPaymentModal } from "@/components/dashboard/violations/ResendPaymentModal";
 import type { Violation, ViolationStatus } from "@/types";
+import Link from "next/link";
 
 interface ViolationsTableProps {
 	violations: Violation[];
@@ -214,7 +215,9 @@ export function ViolationsTable({
 								size="icon"
 								className="h-8 w-8 text-muted-foreground hover:text-primary"
 							>
-								<Eye className="h-4 w-4" />
+								<Link href={`/dashboard/violations/${violation.pcn}`}>
+									<Eye className="w-4 h-4" />
+								</Link>
 							</Button>
 							<Button
 								variant="ghost"
