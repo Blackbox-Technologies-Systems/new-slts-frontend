@@ -2,9 +2,9 @@ import React from "react";
 
 export function StatusBadge({ status }: { status: ApprovalStatus }) {
     const s: Record<ApprovalStatus, string> = {
-        Approved: "text-green-600 bg-green-50 border-green-400",
-        Rejected: "text-red-500   bg-red-50    border-red-400",
-        Submitted: "text-gray-600  bg-gray-50   border-gray-400",
+        Approved: "text-[#12823B] bg-[#F2FFFB] border border-[#12823B]",
+        Rejected: "text-[#BE0D00] bg-[#FFF5F4] border border-[#BE0D00]",
+        Submitted: "text-[#010427]  bg-[#F8FAFC] border border-[#010427]",
     }
 
     return (
@@ -16,10 +16,10 @@ export function StatusBadge({ status }: { status: ApprovalStatus }) {
 
 export function PaymentBadge({ status }: { status: PaymentStatus }) {
     const s: Record<PaymentStatus, string> = {
-        Paid: "text-green-600 bg-green-50 border-green-400",
-        Unpaid: "text-red-500 bg-red-50 border-red-400",
-        Pending: "text-yellow-600 bg-yellow-50 border-yellow-400",
-        Overdue: "text-orange-600 bg-orange-50 border-orange-400"
+        Paid: "text-[#12823B] bg-[#F2FFFB] border border-[#12823B]",
+        Unpaid: "text-[#BE0D00] bg-[#FFF5F4] border border-[#BE0D00]",
+        Pending: "text-[#8A6C00] bg-[#FFFDF4] border border-[#8A6C00]",
+        Overdue: "text-[#BE0D00] bg-[#FFF5F4] border border-[#BE0D00]"
     }
 
     return (
