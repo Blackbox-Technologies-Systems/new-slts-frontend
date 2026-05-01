@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { ModalBackdrop } from "./ModalBackdrop"
 import { ViolationReference } from "../ViolationReference"
-import { X } from "lucide-react"
+import { Check, Info, X } from "lucide-react"
 
 const CHECKLIST = [
     "Evidence reviewed and valid",
@@ -48,6 +48,26 @@ export function ApproveModal({ open, v, onClose }: ApproveModalProps) {
                         <p className={`text-sm font-semibold ${highlight ? "text-emerald-700" : "text-[#010427]"}`}>{value}</p>
                     </div>
                 ))}
+            </div>
+
+            {/* Checklist */}
+            <div className="mt-4 space-y-2">
+                {CHECKLIST.map(item => (
+                    <div key={item} className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full border-2 border-emerald-500 flex items-center justify-center shrink-0">
+                            <Check className="w-3 h-3 text-emerald-500" />
+                        </div>
+                        <span className="text-sm text-slate-700">{item}</span>
+                    </div>
+                ))}
+            </div>
+
+            {/* Notice */}
+            <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex gap-2">
+                <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <p className="text-sm text-emerald-700">
+                    Once approved, the offender will be notified and the fine of <strong>{v.fine}</strong> becomes due for payment. This action is logged and cannot be undone without a new review.
+                </p>
             </div>
         </ModalBackdrop>
     )
