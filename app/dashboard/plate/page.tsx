@@ -1,240 +1,282 @@
-"use client";
+"use client"
 
-import { BookOpen, Code, Settings, Shield, Zap, Database, Palette, GitBranch } from "lucide-react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+// States:
+//   idle     → empty search, "Results will appear here" placeholder
+//   typing   → shows recent searches dropdown
+//   results  → stat strip + 2 cards + violations table
 
-const DOC_SECTIONS = [
-  {
-    icon: <Zap className="h-6 w-6" />,
-    title: "Getting Started",
-    description: "Quick setup guide for new Blackbox developers",
-    items: [
-      "Environment setup and dependencies",
-      "Project structure overview",
-      "Development workflow",
-      "Deployment guidelines"
-    ]
-  },
-  {
-    icon: <Shield className="h-6 w-6" />,
-    title: "Authentication",
-    description: "User auth, roles, and security patterns",
-    items: [
-      "JWT token management",
-      "Role-based access control",
-      "Middleware protection",
-      "API authentication"
-    ]
-  },
-  {
-    icon: <Database className="h-6 w-6" />,
-    title: "State Management",
-    description: "Redux Toolkit patterns and best practices",
-    items: [
-      "Store configuration",
-      "Creating typed slices",
-      "Async thunks and actions",
-      "State persistence"
-    ]
-  },
-  {
-    icon: <Code className="h-6 w-6" />,
-    title: "Components",
-    description: "UI components and design system",
-    items: [
-      "shadcn/ui primitives",
-      "Custom component patterns",
-      "Theme customization",
-      "Accessibility guidelines"
-    ]
-  },
-  {
-    icon: <Settings className="h-6 w-6" />,
-    title: "API Integration",
-    description: "Backend communication and data fetching",
-    items: [
-      "Axios configuration",
-      "Error handling",
-      "Request/response interceptors",
-      "Type-safe API calls"
-    ]
-  },
-  {
-    icon: <GitBranch className="h-6 w-6" />,
-    title: "Development Tools",
-    description: "Essential tools and utilities",
-    items: [
-      "Custom hooks library",
-      "Utility functions",
-      "TypeScript patterns",
-      "Testing setup"
-    ]
-  }
-];
+import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
+import { Search, ChevronRight, Eye, Clock } from "lucide-react"
+import type { PlateResult, PlateViolation, RecentSearch } from "@/types/violations"
+import { CardRow, EvidenceLightbox, InfoCard, PaymentBadge, StatusBadge } from "@/components/violations"
 
-const QUICK_START = [
-  {
-    step: 1,
-    title: "Clone & Install",
-    code: "git clone <repo-url>\ncd bb-starter-pack\nnpm install"
-  },
-  {
-    step: 2,
-    title: "Environment Setup",
-    code: "cp .env.example .env.local\n# Set JWT_SECRET and API_URL"
-  },
-  {
-    step: 3,
-    title: "Start Development",
-    code: "npm run dev\n# Open http://localhost:3000"
-  },
-  {
-    step: 4,
-    title: "Begin Building",
-    code: "# Authenticate and start coding!\n# Check dashboard/docs for guides"
-  }
-];
+// Mock data
+// TODO: replace with apiClient.post("/plate/search", { plate_number }) on submit
 
-export default function DocsPage() {
+const MOCK_RESULT: PlateResult = {
+  plate_number: "ABC-123-DE",
+  pcn: "EDTKT74764",
+  phone_number: "08065412389",
+  brand: "Toyota",
+  vehicle_type: "Car",
+  vehicle_color: "Gray",
+  plate_type: "Visitor",
+  full_name: "John Wick",
+  email_address: "johnwick@example.com",
+  violation_status: "Active",
+  payment_status: "Unpaid",
+  violations: [
+    { id: "1", pcn: "EDTKT74764", offense_type: "Obstruction on Highway", date: "15 FEB 2026 8:30 AM", approval_status: "Rejected", payment_status: "Unpaid" },
+    { id: "2", pcn: "EDTKT74765", offense_type: "Traffic Light Violation", date: "15 FEB 2026 9:30 AM", approval_status: "Submitted", payment_status: "Pending" },
+    { id: "3", pcn: "EDTKT74766", offense_type: "Illegal Parking", date: "15 FEB 2026 11:30 AM", approval_status: "Approved", payment_status: "Paid" },
+  ],
+}
+
+const MOCK_RECENT: RecentSearch[] = [
+  { plate: "ABC-123-DE", label: "2 mins ago" },
+  { plate: "KJA-445-ST", label: "1 hour ago" },
+  { plate: "FNS-427-P", label: "Yesterday" },
+]
+
+// Table header cell
+function Th({ children }: { children: React.ReactNode }) {
   return (
-    <div className="space-y-8 animate-fade-in">
-      <PageHeader
-        title="BB Starter Pack Documentation"
-        description="Everything you need to know about building with Blackbox Technologies' Next.js starter pack."
-      />
+    <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+      {children}
+    </th>
+  )
+}
 
-      {/* Quick Start */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Quick Start Guide
-          </CardTitle>
-          <CardDescription>
-            Get up and running in minutes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {QUICK_START.map((item) => (
-              <div key={item.step} className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="w-6 h-6 rounded-full p-0 flex items-center justify-center text-xs">
-                    {item.step}
-                  </Badge>
-                  <h3 className="font-medium">{item.title}</h3>
-                </div>
-                <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto">
-                  <code>{item.code}</code>
-                </pre>
+{/* Page */ }
+
+type PageState = "idle" | "typing" | "results"
+
+export default function PlateNumberPage() {
+  const [query, setQuery] = useState("")
+  const [pageState, setPageState] = useState<PageState>("idle")
+  const [result, setResult] = useState<PlateResult | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleFocus = () => {
+    if (pageState === "idle") setPageState("typing")
+  }
+
+  const handleChange = (value: string) => {
+    setQuery(value)
+    setPageState(value.length ? "typing" : "idle")
+    if (result) setResult(null) // clear previous results when typing again
+  }
+
+  const handleSubmit = async (plate: string) => {
+    if (!plate.trim()) return
+    setQuery(plate)
+    setPageState("results")
+    setLoading(true)
+
+    // TODO: replace with real API call:
+    //   const data = await apiClient.post("/plate/search", { plate_number: plate })
+    //   setResult(data)
+    await new Promise(r => setTimeout(r, 600)) // simulate latency
+    setResult(MOCK_RESULT)
+    setLoading(false)
+  }
+
+  // Close recent dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        if (pageState === "typing" && !result) setPageState("idle")
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [pageState, result])
+
+  return (
+    <div className="p-6">
+
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-4">
+        <Link href="/dashboard" className="hover:text-slate-700 transition-colors">Dashboard</Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-slate-800 font-medium">Run plate number</span>
+      </nav>
+
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Run Plate Number</h1>
+
+      {/* Search box */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-6 relative">
+        <div className="flex gap-3">
+          <div className="flex-1 relative" ref={inputRef}>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={e => handleChange(e.target.value)}
+              onFocus={handleFocus}
+              onKeyDown={e => e.key === "Enter" && handleSubmit(query)}
+              placeholder="Enter plate number e.g., ABC-123-DE"
+              className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 placeholder:text-slate-400"
+            />
+
+            {/* Recent searches dropdown — visible while typing */}
+            {pageState === "typing" && !result && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                <p className="px-4 pt-3 pb-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  Recent search
+                </p>
+                {MOCK_RECENT.map(s => (
+                  <button
+                    key={s.plate}
+                    type="button"
+                    onClick={() => handleSubmit(s.plate)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="flex items-center gap-2 text-sm text-slate-700">
+                      <Clock className="w-4 h-4 text-slate-400" />
+                      {s.plate}
+                    </span>
+                    <span className="text-xs text-slate-400">{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleSubmit(query)}
+            disabled={loading || !query.trim()}
+            className="px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "Searching…" : "Submit"}
+          </button>
+        </div>
+      </div>
+
+      {/*  Idle state  */}
+      {pageState === "idle" && (
+        <div className="flex flex-col items-center justify-center py-24 text-slate-400">
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" className="mb-4 opacity-30">
+            <rect x="4" y="18" width="48" height="32" rx="6" fill="currentColor" />
+            <circle cx="58" cy="54" r="12" fill="none" stroke="currentColor" strokeWidth="4" />
+            <line x1="67" y1="63" x2="72" y2="68" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          </svg>
+          <p className="text-sm">Results will appear here</p>
+        </div>
+      )}
+
+      {/* ── Results ── */}
+      {pageState === "results" && result && !loading && (
+        <>
+          {/* 3-column stat strip */}
+          <div className="flex flex-wrap gap-10 mb-6">
+            {[
+              { label: "Plate Number", value: result.plate_number },
+              { label: "PCN NO", value: result.pcn },
+              { label: "Phone Number", value: result.phone_number },
+            ].map(({ label, value }) => (
+              <div key={label}>
+                <p className="text-lg font-bold text-slate-900">{value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{label}</p>
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Documentation Sections */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {DOC_SECTIONS.map((section) => (
-          <Card key={section.title} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                  {section.icon}
-                </div>
-                <div>
-                  <CardTitle className="text-lg">{section.title}</CardTitle>
-                  <CardDescription>{section.description}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {section.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Separator className="my-4" />
-              <Button variant="outline" size="sm" className="w-full">
-                View Documentation
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+          {/* 2 info cards — Vehicle Info + Offender Info */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+            <InfoCard title="Vehicle Info">
+              <CardRow label="Brand">{result.brand}</CardRow>
+              <CardRow label="Type">{result.vehicle_type}</CardRow>
+              <CardRow label="Vehicle Color">{result.vehicle_color}</CardRow>
+              <CardRow label="Plate Number">{result.plate_number}</CardRow>
+              <CardRow label="Plate Type">{result.plate_type}</CardRow>
+            </InfoCard>
 
-      {/* Key Features */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Key Features & Architecture</CardTitle>
-          <CardDescription>
-            Core technologies and patterns used in the BB Starter Pack
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Palette className="h-4 w-4" />
-                  Frontend Stack
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Next.js 14 with App Router</li>
-                  <li>• TypeScript for type safety</li>
-                  <li>• Tailwind CSS + shadcn/ui</li>
-                  <li>• Redux Toolkit for state</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Security & Auth
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• JWT-based authentication</li>
-                  <li>• HTTP-only cookies</li>
-                  <li>• Route protection middleware</li>
-                  <li>• Role-based permissions</li>
-                </ul>
-              </div>
+            <InfoCard title="Offender Info">
+              <CardRow label="Full Name">{result.full_name}</CardRow>
+              <CardRow label="Phone Number">{result.phone_number}</CardRow>
+              <CardRow label="Email Address">{result.email_address}</CardRow>
+              <CardRow label="Violation Status">{result.violation_status}</CardRow>
+              <CardRow label="Payment Status"><PaymentBadge status={result.payment_status} /></CardRow>
+            </InfoCard>
+          </div>
+
+          {/* Violations table */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100">
+              <h2 className="text-base font-bold text-slate-900">
+                Violations linked to {result.plate_number}
+              </h2>
             </div>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Database className="h-4 w-4" />
-                  Data Management
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Axios for API calls</li>
-                  <li>• Redux persist for state</li>
-                  <li>• Type-safe API clients</li>
-                  <li>• Error handling patterns</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Code className="h-4 w-4" />
-                  Developer Experience
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Custom React hooks</li>
-                  <li>• Utility functions</li>
-                  <li>• ESLint + Prettier</li>
-                  <li>• Hot reload development</li>
-                </ul>
-              </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-100">
+                  <tr>
+                    <Th>S/N</Th>
+                    <Th>PCN</Th>
+                    <Th>Offense Type</Th>
+                    <Th>Date</Th>
+                    <Th>Status</Th>
+                    <Th>Payment</Th>
+                    <Th>Action</Th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-slate-100">
+                  {result.violations.map((v: PlateViolation, i: number) => (
+                    <tr key={v.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-4 py-3.5 text-sm text-slate-500">{i + 1}</td>
+                      <td className="px-4 py-3.5 text-sm text-slate-400 font-mono">{v.pcn}</td>
+                      <td className="px-4 py-3.5 text-sm font-medium text-slate-800">{v.offense_type}</td>
+                      <td className="px-4 py-3.5 text-sm text-slate-600 whitespace-nowrap">{v.date}</td>
+                      <td className="px-4 py-3.5"><StatusBadge status={v.approval_status} /></td>
+                      <td className="px-4 py-3.5"><PaymentBadge status={v.payment_status} /></td>
+                      <td className="px-4 py-3.5">
+
+                        {/* Eye icon → view violation detail page */}
+                        <Link href={`/dashboard/violations/${v.pcn}`}
+                          className="text-slate-400 hover:text-slate-700 transition-colors">
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-6 py-3 border-t border-slate-100 text-xs text-slate-400">
+              Showing {result.violations.length} violation{result.violations.length !== 1 ? "s" : ""} for {result.plate_number}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </>
+      )}
+      {/* Loading skeleton */}
+      {loading && (
+        <div className="space-y-4 animate-pulse">
+          <div className="h-6 w-64 bg-slate-200 rounded-lg" />
+          <div className="flex gap-4">
+            <div className="flex-1 h-48 bg-slate-200 rounded-2xl" />
+            <div className="flex-1 h-48 bg-slate-200 rounded-2xl" />
+          </div>
+          <div className="h-48 bg-slate-200 rounded-2xl" />
+        </div>
+      )}
+
+      {/* Lightbox — wired for future use when evidence is returned per violation */}
+      {lightboxIndex !== null && (
+        <EvidenceLightbox
+          items={[]} // TODO: pass evidence from selected violation
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNav={setLightboxIndex}
+        />
+      )}
     </div>
-  );
+  )
 }
