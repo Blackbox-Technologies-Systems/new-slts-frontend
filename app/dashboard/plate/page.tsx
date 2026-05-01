@@ -1,240 +1,94 @@
-"use client";
+"use client"
 
-import { BookOpen, Code, Settings, Shield, Zap, Database, Palette, GitBranch } from "lucide-react";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+// States:
+//   idle     → empty search, "Results will appear here" placeholder
+//   typing   → shows recent searches dropdown
+//   results  → stat strip + 2 cards + violations table
 
-const DOC_SECTIONS = [
-  {
-    icon: <Zap className="h-6 w-6" />,
-    title: "Getting Started",
-    description: "Quick setup guide for new Blackbox developers",
-    items: [
-      "Environment setup and dependencies",
-      "Project structure overview",
-      "Development workflow",
-      "Deployment guidelines"
-    ]
-  },
-  {
-    icon: <Shield className="h-6 w-6" />,
-    title: "Authentication",
-    description: "User auth, roles, and security patterns",
-    items: [
-      "JWT token management",
-      "Role-based access control",
-      "Middleware protection",
-      "API authentication"
-    ]
-  },
-  {
-    icon: <Database className="h-6 w-6" />,
-    title: "State Management",
-    description: "Redux Toolkit patterns and best practices",
-    items: [
-      "Store configuration",
-      "Creating typed slices",
-      "Async thunks and actions",
-      "State persistence"
-    ]
-  },
-  {
-    icon: <Code className="h-6 w-6" />,
-    title: "Components",
-    description: "UI components and design system",
-    items: [
-      "shadcn/ui primitives",
-      "Custom component patterns",
-      "Theme customization",
-      "Accessibility guidelines"
-    ]
-  },
-  {
-    icon: <Settings className="h-6 w-6" />,
-    title: "API Integration",
-    description: "Backend communication and data fetching",
-    items: [
-      "Axios configuration",
-      "Error handling",
-      "Request/response interceptors",
-      "Type-safe API calls"
-    ]
-  },
-  {
-    icon: <GitBranch className="h-6 w-6" />,
-    title: "Development Tools",
-    description: "Essential tools and utilities",
-    items: [
-      "Custom hooks library",
-      "Utility functions",
-      "TypeScript patterns",
-      "Testing setup"
-    ]
+import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
+import { Search, ChevronRight } from "lucide-react"
+
+
+
+{/* Page */ }
+
+type PageState = "idle" | "typing" | "results"
+
+export default function PlateNumberPage() {
+  const [query, setQuery] = useState("")
+  const [pageState, setPageState] = useState<PageState>("idle")
+  const [result, setResult] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleFocus = () => {
+    if (pageState === "idle") setPageState("typing")
   }
-];
 
-const QUICK_START = [
-  {
-    step: 1,
-    title: "Clone & Install",
-    code: "git clone <repo-url>\ncd bb-starter-pack\nnpm install"
-  },
-  {
-    step: 2,
-    title: "Environment Setup",
-    code: "cp .env.example .env.local\n# Set JWT_SECRET and API_URL"
-  },
-  {
-    step: 3,
-    title: "Start Development",
-    code: "npm run dev\n# Open http://localhost:3000"
-  },
-  {
-    step: 4,
-    title: "Begin Building",
-    code: "# Authenticate and start coding!\n# Check dashboard/docs for guides"
+  const handleChange = (value: string) => {
+    setQuery(value)
+    setPageState(value.length ? "typing" : "idle")
+    if (result) setResult(null) // clear previous results when typing again
   }
-];
 
-export default function DocsPage() {
+  const handleSubmit = async (plate: string) => {
+
+  }
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      <PageHeader
-        title="BB Starter Pack Documentation"
-        description="Everything you need to know about building with Blackbox Technologies' Next.js starter pack."
-      />
+    <div className="p-6">
 
-      {/* Quick Start */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            Quick Start Guide
-          </CardTitle>
-          <CardDescription>
-            Get up and running in minutes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {QUICK_START.map((item) => (
-              <div key={item.step} className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="w-6 h-6 rounded-full p-0 flex items-center justify-center text-xs">
-                    {item.step}
-                  </Badge>
-                  <h3 className="font-medium">{item.title}</h3>
-                </div>
-                <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto">
-                  <code>{item.code}</code>
-                </pre>
-              </div>
-            ))}
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-sm text-slate-500 mb-4">
+        <Link href="/dashboard" className="hover:text-slate-700 transition-colors">Dashboard</Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-slate-800 font-medium">Run plate number</span>
+      </nav>
+
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Run Plate Number</h1>
+
+      {/* Search box */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-6 relative">
+        <div className="flex gap-3">
+          <div className="flex-1 relative" ref={inputRef}>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              value={query}
+              onChange={e => handleChange(e.target.value)}
+              onFocus={handleFocus}
+              onKeyDown={e => e.key === "Enter" && handleSubmit(query)}
+              placeholder="Enter plate number e.g., ABC-123-DE"
+              className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 placeholder:text-slate-400"
+            />
+
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Documentation Sections */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {DOC_SECTIONS.map((section) => (
-          <Card key={section.title} className="hover:shadow-md transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                  {section.icon}
-                </div>
-                <div>
-                  <CardTitle className="text-lg">{section.title}</CardTitle>
-                  <CardDescription>{section.description}</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {section.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-sm">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary/60" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Separator className="my-4" />
-              <Button variant="outline" size="sm" className="w-full">
-                View Documentation
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+          <button
+            type="button"
+            onClick={() => handleSubmit(query)}
+            disabled={loading || !query.trim()}
+            className="px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "Searching…" : "Submit"}
+          </button>
+        </div>
       </div>
 
-      {/* Key Features */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Key Features & Architecture</CardTitle>
-          <CardDescription>
-            Core technologies and patterns used in the BB Starter Pack
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Palette className="h-4 w-4" />
-                  Frontend Stack
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Next.js 14 with App Router</li>
-                  <li>• TypeScript for type safety</li>
-                  <li>• Tailwind CSS + shadcn/ui</li>
-                  <li>• Redux Toolkit for state</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Security & Auth
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• JWT-based authentication</li>
-                  <li>• HTTP-only cookies</li>
-                  <li>• Route protection middleware</li>
-                  <li>• Role-based permissions</li>
-                </ul>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Database className="h-4 w-4" />
-                  Data Management
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Axios for API calls</li>
-                  <li>• Redux persist for state</li>
-                  <li>• Type-safe API clients</li>
-                  <li>• Error handling patterns</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  <Code className="h-4 w-4" />
-                  Developer Experience
-                </h4>
-                <ul className="text-sm text-muted-foreground space-y-1 ml-6">
-                  <li>• Custom React hooks</li>
-                  <li>• Utility functions</li>
-                  <li>• ESLint + Prettier</li>
-                  <li>• Hot reload development</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Idle state */}
+      {pageState === "idle" && (
+        <div className="flex flex-col items-center justify-center py-24 text-slate-400">
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" className="mb-4 opacity-30">
+            <rect x="4" y="18" width="48" height="32" rx="6" fill="currentColor" />
+            <circle cx="58" cy="54" r="12" fill="none" stroke="currentColor" strokeWidth="4" />
+            <line x1="67" y1="63" x2="72" y2="68" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          </svg>
+          <p className="text-sm">Results will appear here</p>
+        </div>
+      )}
+
     </div>
-  );
+  )
 }
